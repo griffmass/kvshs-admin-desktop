@@ -188,7 +188,7 @@ export default function Dashboard({ onNavigate }: { onNavigate: (page: string) =
           <div className="flex flex-col gap-8">
             <div className="bg-white p-6 rounded-xl shadow-md flex-grow">
               <div className="flex justify-between items-center border-b-2 border-gray-300 pb-2 mb-4">
-                <h2 className="text-lg font-bold text-gray-600">PENDING STUDENTS:</h2>
+                <h2 className="text-lg font-bold text-gray-600">RECENT ENROLLMENT APPLICATIONS:</h2>
                 <button
                   onClick={() => onNavigate('new-student')}
                   className="text-sm font-medium text-gray-600 hover:text-black bg-gray-100 hover:bg-gray-200 px-3 py-1 rounded-lg transition-all duration-200"
@@ -229,7 +229,7 @@ export default function Dashboard({ onNavigate }: { onNavigate: (page: string) =
 
           <div className="mt-8 bg-white p-6 rounded-xl shadow-md flex-grow">
             <div className="flex justify-between items-center border-b-2 border-gray-300 pb-2 mb-4">
-              <h2 className="text-lg font-bold text-gray-600">PENDING ALS STUDENTS:</h2>
+              <h2 className="text-lg font-bold text-gray-600">RECENT ALS ENROLLMENT APPLICATIONS:</h2>
               <button
                 onClick={() => onNavigate('als-new-enrollees')}
                 className="text-sm font-medium text-gray-600 hover:text-black bg-gray-100 hover:bg-gray-200 px-3 py-1 rounded-lg transition-all duration-200"

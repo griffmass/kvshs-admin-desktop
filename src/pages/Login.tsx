@@ -142,7 +142,7 @@ export default function Login() {
           About Us
         </button>
         <button
-          onClick={() => window.open('https://github.com/griffmass/kvshs-enrollment-management/tree/main', '_blank')}
+          onClick={() => window.open('https://github.com/griffmass/kvshs-enrollment-management', '_blank')}
           className="text-blue-600 hover:text-blue-800 text-sm font-medium transition-colors"
         >
           Github
