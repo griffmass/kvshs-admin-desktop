@@ -12,6 +12,7 @@ export default function Login() {
   const [error, setError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [keepLoggedIn, setKeepLoggedIn] = useState(false);
+  const [showAboutModal, setShowAboutModal] = useState(false);
   const { signIn } = useAuth();
   const navigate = useNavigate();
 
@@ -39,7 +40,7 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen w-screen flex items-center justify-center p-4 bg-gradient-to-br from-blue-100 to-blue-300">
+    <div className="min-h-screen w-screen flex items-center justify-center p-4 bg-gradient-to-br from-blue-100 to-blue-300 relative">
       <div className="w-full max-w-4xl bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl shadow-2xl overflow-hidden border border-blue-300 grid md:grid-cols-2">
         <div className="p-8 md:p-12">
           <div className="flex items-center gap-3 mb-8">
@@ -131,6 +132,79 @@ export default function Login() {
           </div>
         </div>
       </div>
+
+      {/* About Us and Github Links */}
+      <div className="absolute bottom-4 left-4 flex gap-6">
+        <button
+          onClick={() => setShowAboutModal(true)}
+          className="text-blue-600 hover:text-blue-800 text-sm font-medium transition-colors"
+        >
+          About Us
+        </button>
+        <button
+          onClick={() => window.open('https://github.com/griffmass/kvshs-enrollment-management/tree/main', '_blank')}
+          className="text-blue-600 hover:text-blue-800 text-sm font-medium transition-colors"
+        >
+          Github
+        </button>
+      </div>
+
+      {/* About Modal */}
+      {showAboutModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4" style={{ zIndex: 9999 }}>
+          <div className="bg-white rounded-lg shadow-xl max-w-xl w-full">
+            <div className="p-6">
+              <div className="flex justify-between items-center mb-6 border-b pb-4">
+                <h2 className="text-2xl font-bold text-gray-800">About Us</h2>
+                <button
+                  onClick={() => setShowAboutModal(false)}
+                  className="text-gray-500 hover:text-gray-700 text-3xl leading-none"
+                >
+                  &times;
+                </button>
+              </div>
+
+              <div className="mb-6">
+                <h3 className="text-lg font-semibold text-gray-800 mb-4 text-center">PROJECT DEVELOPERS</h3>
+                <hr className="border-gray-300 mb-6" />
+                <div className="grid grid-cols-2 gap-6 justify-items-center">
+                  <div className="text-center">
+                    <p className="font-bold text-gray-600">MR. JOHN MICHAEL G. ABANIL</p>
+                    <p className="text-gray-500 text-sm">Desktop and Lead Developer</p>
+                  </div>
+                  <div className="text-center">
+                    <p className="font-bold text-gray-600">MR. ARON JAMES L. BETINOL</p>
+                    <p className="text-gray-500 text-sm">Web Developer</p>
+                  </div>
+                  <div className="text-center">
+                    <p className="font-bold text-gray-600">MR. JOMEL M. MARIÑO</p>
+                    <p className="text-gray-500 text-sm">Mobile Developer</p>
+                  </div>
+                  <div className="text-center">
+                    <p className="font-bold text-gray-600">MS. JENNELYN S. SERANTE</p>
+                    <p className="text-gray-500 text-sm">Docs</p>
+                  </div>
+                </div>
+                <div className="text-center mt-6">
+                  <div>
+                    <p className="font-bold text-gray-600">MS. ANGELICA C. GALANTO</p>
+                    <p className="text-gray-500 text-sm">Docs</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex justify-center pt-4">
+                <button
+                  onClick={() => setShowAboutModal(false)}
+                  className="px-6 py-2 bg-gradient-to-r from-blue-500 to-blue-700 text-white rounded-lg hover:from-blue-600 hover:to-blue-800 transition duration-300 shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-600"
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
