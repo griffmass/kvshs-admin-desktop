@@ -27,7 +27,7 @@ function createWindow() {
   const isDev = process.env.NODE_ENV === 'development' || !app.isPackaged;
 
   if (isDev) {
-    const devUrl = 'http://localhost:5174'; // Updated to match actual Vite port
+    const devUrl = 'http://localhost:5173'; // Updated to match actual Vite port
     console.log('Attempting to load dev URL:', devUrl);
 
     // Load URL directly without checking - the require issue is causing problems
