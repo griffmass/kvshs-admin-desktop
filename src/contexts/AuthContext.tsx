@@ -26,6 +26,7 @@ interface AuthContextType {
   loading: boolean;
   signOut: () => Promise<void>;
   signIn: (user: AdminUser, remember?: boolean) => void;
+  refreshUser: () => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -85,11 +86,42 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     sessionStorage.removeItem('admin_user');
   };
 
+  const refreshUser = () => {
+    // Check for remembered login first (localStorage)
+    const rememberedUser = localStorage.getItem('admin_user');
+    const rememberLogin = localStorage.getItem('remember_login') === 'true';
+
+    if (rememberedUser && rememberLogin) {
+      try {
+        const parsedUser = JSON.parse(rememberedUser);
+        setUser(parsedUser);
+        return;
+      } catch (error) {
+        console.error('Error parsing remembered user:', error);
+        localStorage.removeItem('admin_user');
+        localStorage.removeItem('remember_login');
+      }
+    }
+
+    // Check for session login (sessionStorage)
+    const sessionUser = sessionStorage.getItem('admin_user');
+    if (sessionUser) {
+      try {
+        const parsedUser = JSON.parse(sessionUser);
+        setUser(parsedUser);
+      } catch (error) {
+        console.error('Error parsing session user:', error);
+        sessionStorage.removeItem('admin_user');
+      }
+    }
+  };
+
   const value = {
     user,
     loading,
     signOut,
     signIn,
+    refreshUser,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

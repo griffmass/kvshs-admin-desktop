@@ -16,7 +16,7 @@ export default function ChangePassword() {
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, refreshUser } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -53,6 +53,8 @@ export default function ChangePassword() {
       if (!updateResult.success) {
         setError(updateResult.error || 'Failed to update password.');
       } else {
+        // Refresh user data to ensure consistency
+        refreshUser();
         setSuccess(true);
         setTimeout(() => {
           navigate('/dashboard');
