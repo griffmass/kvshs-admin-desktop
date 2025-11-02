@@ -27,7 +27,12 @@ function createWindow() {
   const isDev = process.env.NODE_ENV === 'development' || !app.isPackaged;
 
   if (isDev) {
-    mainWindow.loadURL('http://localhost:5176');
+    const devUrl = 'http://localhost:5174'; // Updated to match actual Vite port
+    console.log('Attempting to load dev URL:', devUrl);
+
+    // Load URL directly without checking - the require issue is causing problems
+    mainWindow.loadURL(devUrl);
+
     mainWindow.webContents.openDevTools();
   } else {
     mainWindow.loadFile(path.join(__dirname, '../dist/index.html'));

@@ -16,6 +16,14 @@ export default function RegularStudent() {
   const [editedStudent, setEditedStudent] = useState<Student | null>(null);
   const [originalLrn, setOriginalLrn] = useState<string | undefined>(undefined);
   const [hasChanges, setHasChanges] = useState(false);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [successMessage, setSuccessMessage] = useState('');
+  const [confirmAction, setConfirmAction] = useState<{
+    type: 'delete';
+    studentLrn: string | undefined;
+    studentName?: string;
+  } | null>(null);
 
   const modalContentRef = useRef<HTMLDivElement>(null);
 
@@ -51,7 +59,9 @@ export default function RegularStudent() {
   };
 
   const filteredStudents = students.filter((student) => {
+    const fullName = `${student.lname || ''}, ${student.fname || ''} ${student.mname || ''}`.trim();
     const matchesSearch = searchTerm === '' ||
+      fullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
       student.lname?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       student.fname?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       student.mname?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -63,6 +73,17 @@ export default function RegularStudent() {
 
     return matchesSearch && matchesStrand && matchesGradeLevel && matchesSemester;
   });
+
+  const handleSearch = () => {
+    // Search is now handled in real-time by the filteredStudents computed value
+    // No additional logic needed as filtering happens on every keystroke
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      handleSearch();
+    }
+  };
 
 
 
@@ -122,7 +143,8 @@ export default function RegularStudent() {
 
       setIsEditing(false);
       setHasChanges(false);
-      alert('Student information updated successfully!');
+      setSuccessMessage('Student information updated successfully!');
+      setShowSuccessModal(true);
     } catch (error) {
       console.error('Error updating student:', error);
       alert('Failed to update student information');
@@ -142,19 +164,32 @@ export default function RegularStudent() {
     }
   };
 
-  const handleDelete = async (studentLrn: string | undefined) => {
+  const handleDelete = (studentLrn: string | undefined, studentName?: string) => {
     if (!studentLrn) return;
-    if (!confirm('Are you sure you want to delete this student?')) return;
+    setConfirmAction({
+      type: 'delete',
+      studentLrn,
+      studentName
+    });
+    setShowConfirmModal(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!confirmAction || confirmAction.type !== 'delete') return;
 
     try {
       const { error } = await supabase
         .from('NewStudents')
         .delete()
-        .eq('lrn', studentLrn);
+        .eq('lrn', confirmAction.studentLrn);
 
       if (error) throw error;
 
-      setStudents(students.filter((s) => s.lrn !== studentLrn));
+      setStudents(students.filter((s) => s.lrn !== confirmAction.studentLrn));
+      setShowConfirmModal(false);
+      setConfirmAction(null);
+      setSuccessMessage('Student deleted successfully!');
+      setShowSuccessModal(true);
     } catch (error) {
       console.error('Error deleting student:', error);
       alert('Failed to delete student');
@@ -236,9 +271,8 @@ export default function RegularStudent() {
 
   return (
     <div className="relative flex min-h-screen overflow-hidden">
-      <div className="absolute inset-0 -z-10">
-        <div className="w-full h-[450px] bg-gradient-to-br from-blue-500 to-blue-50"></div>
-        <div className="w-full h-full bg-gray-100 -mt-[2px]"></div>
+      <div className="absolute left-68 inset-y-0 right-0 -z-10">
+        <div className="w-full h-full bg-white"></div>
       </div>
 
       <div className="flex-1 flex flex-col min-h-screen ml-68 overflow-y-auto">
@@ -247,70 +281,81 @@ export default function RegularStudent() {
             <h1 className="text-2xl font-bold text-white">Regular Students</h1>
           </div>
 
-          <div className="mb-6 flex items-center gap-4">
-            <div className="flex-1 relative">
-              <input
-                type="text"
-                placeholder="Search"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-              <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
-            </div>
-            <button
-              onClick={() => {
-                // Search is now handled by the filteredStudents computed value
-              }}
-              className="bg-blue-500 text-white px-6 py-2 rounded-md hover:bg-blue-600"
-            >
-              Search
-            </button>
-          </div>
-
           <div className="bg-white p-6 rounded-xl shadow-md flex-grow">
             <div className="border-b-2 border-gray-300 pb-2 mb-4">
               <h2 className="text-lg font-bold text-gray-600">LIST OF ALL REGULAR STUDENTS:</h2>
             </div>
-            <div className="flex items-center gap-4 mb-4">
-              <span className="text-sm text-gray-600 font-medium">SORT BY:</span>
-              <select
-                value={sortStrand}
-                onChange={(e) => setSortStrand(e.target.value)}
-                className="px-3 py-1 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-              >
-                <option value="">STRAND</option>
-                <option value="STEM">STEM</option>
-                <option value="ABM">ABM</option>
-                <option value="HUMSS">HUMSS</option>
-                <option value="TVL-ICT">TVL-ICT</option>
-              </select>
-              <select
-                value={sortGradeLevel}
-                onChange={(e) => setSortGradeLevel(e.target.value)}
-                className="px-3 py-1 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-              >
-                <option value="">GRADE LEVEL</option>
-                <option value="None">None Graded</option>
-                <option value="11">11</option>
-                <option value="12">12</option>
-              </select>
-              <select
-                value={sortSemester}
-                onChange={(e) => setSortSemester(e.target.value)}
-                className="px-3 py-1 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-              >
-                <option value="">SEMESTER</option>
-                <option value="1st">1st</option>
-                <option value="2nd">2nd</option>
-              </select>
+            <div className="flex items-center justify-between gap-4 mb-4">
+              <div className="flex items-center gap-4">
+                <span className="text-sm text-gray-600 font-medium">SORT BY:</span>
+                <select
+                  value={sortStrand}
+                  onChange={(e) => setSortStrand(e.target.value)}
+                  className="px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition duration-200 shadow-sm"
+                >
+                  <option value="">STRAND</option>
+                  <option value="STEM">STEM</option>
+                  <option value="ABM">ABM</option>
+                  <option value="HUMSS">HUMSS</option>
+                  <option value="TVL-ICT">TVL-ICT</option>
+                </select>
+                <select
+                  value={sortGradeLevel}
+                  onChange={(e) => setSortGradeLevel(e.target.value)}
+                  className="px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition duration-200 shadow-sm"
+                >
+                  <option value="">GRADE LEVEL</option>
+                  <option value="None">None Graded</option>
+                  <option value="11">11</option>
+                  <option value="12">12</option>
+                </select>
+                <select
+                  value={sortSemester}
+                  onChange={(e) => setSortSemester(e.target.value)}
+                  className="px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition duration-200 shadow-sm"
+                >
+                  <option value="">SEMESTER</option>
+                  <option value="1st">1st</option>
+                  <option value="2nd">2nd</option>
+                </select>
+              </div>
+              <div className="relative">
+                <input
+                  type="text"
+                  placeholder="Search by name, LRN, etc."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  onKeyPress={handleKeyPress}
+                  className="w-80 px-4 py-2 pl-10 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition duration-200 text-gray-700 placeholder-gray-400 shadow-sm"
+                />
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
+                {searchTerm && (
+                  <button
+                    onClick={() => setSearchTerm('')}
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                    title="Clear search"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                )}
+              </div>
             </div>
+            {searchTerm && (
+              <div className="mb-4 text-sm text-gray-600">
+                Searching for: <span className="font-medium text-blue-600">"{searchTerm}"</span>
+                <span className="ml-2 text-xs text-gray-500">
+                  ({filteredStudents.length} result{filteredStudents.length !== 1 ? 's' : ''} found)
+                </span>
+              </div>
+            )}
             <div className="overflow-x-auto">
               {filteredStudents.length === 0 ? (
                 <div className="p-8 text-center text-gray-500">No students found</div>
               ) : (
                 <table className="w-full text-sm text-left text-gray-500">
-                  <thead className="text-xs text-gray-700 uppercase bg-gray-50">
+                  <thead className="text-xs text-gray-600 uppercase bg-gray-50">
                     <tr>
                       <th scope="col" className="py-3 px-6">Action</th>
                       <th scope="col" className="py-3 px-6">LRN</th>
@@ -334,7 +379,7 @@ export default function RegularStudent() {
                               <span>View</span>
                             </button>
                             <button
-                              onClick={() => handleDelete(student.lrn)}
+                              onClick={() => handleDelete(student.lrn, `${student.lname}, ${student.fname}`)}
                               className="flex items-center space-x-1 px-3 py-1 bg-red-600 text-white text-xs rounded hover:bg-red-700"
                             >
                               <Trash2 size={14} />
@@ -361,6 +406,94 @@ export default function RegularStudent() {
           </div>
         </div>
       </div>
+
+      {/* Confirmation Modal */}
+      {showConfirmModal && confirmAction && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg shadow-xl max-w-md w-full">
+            <div className="p-6">
+              <div className="flex justify-between items-center mb-6 border-b pb-4">
+                <h2 className="text-2xl font-bold text-gray-800">
+                  Confirm Delete
+                </h2>
+                <button
+                  onClick={() => {
+                    setShowConfirmModal(false);
+                    setConfirmAction(null);
+                  }}
+                  className="text-gray-500 hover:text-gray-700 text-3xl leading-none"
+                >
+                  &times;
+                </button>
+              </div>
+
+              <div className="mb-6">
+                <p className="text-gray-600 text-lg">
+                  Are you sure you want to delete the student "{confirmAction.studentName}"?
+                </p>
+                <p className="text-red-600 text-sm mt-2 font-medium">
+                  This action cannot be undone.
+                </p>
+              </div>
+
+              <div className="flex justify-end gap-3 pt-4">
+                <button
+                  onClick={() => {
+                    setShowConfirmModal(false);
+                    setConfirmAction(null);
+                  }}
+                  className="px-6 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition duration-300"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleConfirmDelete}
+                  className="px-6 py-2 text-white rounded-lg transition duration-300 shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-offset-2 bg-gradient-to-r from-red-500 to-red-700 hover:from-red-600 hover:to-red-800 focus:ring-red-600"
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Success Modal */}
+      {showSuccessModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg shadow-xl max-w-md w-full">
+            <div className="p-6">
+              <div className="flex justify-between items-center mb-6 border-b pb-4">
+                <h2 className="text-2xl font-bold text-gray-800">Success</h2>
+                <button
+                  onClick={() => setShowSuccessModal(false)}
+                  className="text-gray-500 hover:text-gray-700 text-3xl leading-none"
+                >
+                  &times;
+                </button>
+              </div>
+
+              <div className="mb-6">
+                <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                </div>
+                <p className="text-gray-600 text-lg text-center">{successMessage}</p>
+              </div>
+
+              <div className="flex justify-center pt-4">
+                <button
+                  onClick={() => setShowSuccessModal(false)}
+                  className="px-6 py-2 bg-gradient-to-r from-blue-500 to-blue-700 text-white rounded-lg hover:from-blue-600 hover:to-blue-800 transition duration-300 shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-600"
+                >
+                  OK
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Modal for viewing student details */}
       {showModal && selectedStudent && (
@@ -1139,6 +1272,7 @@ export default function RegularStudent() {
                     >
                       Cancel
                     </button>
+                    <div className="w-4"></div>
                     <button
                       onClick={handleSave}
                       disabled={!hasChanges}

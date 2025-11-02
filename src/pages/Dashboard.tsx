@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { supabase, Student } from '../lib/supabase';
 
-export default function Dashboard() {
+export default function Dashboard({ onNavigate }: { onNavigate: (page: string) => void }) {
   const [pendingStudents, setPendingStudents] = useState<Student[]>([]);
   const [alsPendingStudents, setAlsPendingStudents] = useState<Student[]>([]);
   const [stats, setStats] = useState({
@@ -51,12 +51,13 @@ export default function Dashboard() {
 
       if (enrolledError) throw enrolledError;
 
-      // Fetch pending students from NewStudents
+      // Fetch pending students from NewStudents (limit to 3 for dashboard, most recent first)
       const { data: pendingData, error: pendingError } = await supabase
         .from('NewStudents')
         .select('lrn, lname, fname, mname, semester, strand, enrollment_status')
         .eq('enrollment_status', 'Pending')
-        .order('lrn', { ascending: true });
+        .order('lrn', { ascending: false })
+        .limit(3);
 
       if (pendingError) throw pendingError;
 
@@ -69,12 +70,13 @@ export default function Dashboard() {
 
       if (alsEnrolledError) throw alsEnrolledError;
 
-      // Fetch pending ALS students
+      // Fetch pending ALS students (limit to 3 for dashboard, most recent first)
       const { data: alsPendingData, error: alsPendingError } = await supabase
         .from('ALS')
         .select('lrn, lname, fname, mname, age, enrollment_status')
         .eq('enrollment_status', 'Pending')
-        .order('lrn', { ascending: true });
+        .order('lrn', { ascending: false })
+        .limit(3);
 
       if (alsPendingError) throw alsPendingError;
 
@@ -107,7 +109,7 @@ export default function Dashboard() {
   return (
     <div className="relative flex min-h-screen overflow-hidden">
       {/* Main container for the two-part background */}
-      <div className="absolute inset-0 -z-10">
+      <div className="absolute left-68 inset-y-0 right-0 -z-10">
         <div className="w-full h-[450px] bg-gradient-to-br from-blue-500 to-blue-50"></div>
         <div className="w-full h-full bg-gray-100 -mt-[2px]"></div> {/* Clean overlap */}
       </div>
@@ -187,11 +189,16 @@ export default function Dashboard() {
             <div className="bg-white p-6 rounded-xl shadow-md flex-grow">
               <div className="flex justify-between items-center border-b-2 border-gray-300 pb-2 mb-4">
                 <h2 className="text-lg font-bold text-gray-600">PENDING STUDENTS:</h2>
-                <a href="#" className="text-sm font-medium text-gray-600 hover:text-black bg-gray-100 hover:bg-gray-200 px-3 py-1 rounded-lg transition-all duration-200">See All</a>
+                <button
+                  onClick={() => onNavigate('new-student')}
+                  className="text-sm font-medium text-gray-600 hover:text-black bg-gray-100 hover:bg-gray-200 px-3 py-1 rounded-lg transition-all duration-200"
+                >
+                  See All
+                </button>
               </div>
-              <div className="overflow-x-auto">
+              <div className="overflow-x-auto max-h-48 overflow-y-auto">
                 <table className="w-full text-sm text-left text-gray-500">
-                  <thead className="text-xs text-gray-700 uppercase bg-gray-50">
+                  <thead className="text-xs text-gray-700 uppercase bg-gray-50 sticky top-0">
                     <tr>
                       <th scope="col" className="py-3 px-6">Name</th>
                       <th scope="col" className="py-3 px-6">Strand</th>
@@ -223,11 +230,16 @@ export default function Dashboard() {
           <div className="mt-8 bg-white p-6 rounded-xl shadow-md flex-grow">
             <div className="flex justify-between items-center border-b-2 border-gray-300 pb-2 mb-4">
               <h2 className="text-lg font-bold text-gray-600">PENDING ALS STUDENTS:</h2>
-              <a href="#" className="text-sm font-medium text-gray-600 hover:text-black bg-gray-100 hover:bg-gray-200 px-3 py-1 rounded-lg transition-all duration-200">See All</a>
+              <button
+                onClick={() => onNavigate('als-new-enrollees')}
+                className="text-sm font-medium text-gray-600 hover:text-black bg-gray-100 hover:bg-gray-200 px-3 py-1 rounded-lg transition-all duration-200"
+              >
+                See All
+              </button>
             </div>
-            <div className="overflow-x-auto">
+            <div className="overflow-x-auto max-h-48 overflow-y-auto">
               <table className="w-full text-sm text-left text-gray-500">
-                <thead className="text-xs text-gray-700 uppercase bg-gray-50">
+                <thead className="text-xs text-gray-700 uppercase bg-gray-50 sticky top-0">
                   <tr>
                     <th scope="col" className="py-3 px-6">Name</th>
                     <th scope="col" className="py-3 px-6">LRN</th>

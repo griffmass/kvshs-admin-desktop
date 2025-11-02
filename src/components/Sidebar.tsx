@@ -1,5 +1,4 @@
-import { LayoutDashboard, UserPlus, BookOpen, GraduationCap, User } from 'lucide-react';
-import { useState } from 'react';
+import { LayoutDashboard, UserPlus, BookOpen, GraduationCap, User, Shield } from 'lucide-react';
 
 interface SidebarProps {
   currentPage: string;
@@ -8,20 +7,7 @@ interface SidebarProps {
 }
 
 export default function Sidebar({ currentPage, onNavigate, onLogout }: SidebarProps) {
-  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
-  const handleLogoutClick = () => {
-    setShowLogoutConfirm(true);
-  };
-
-  const confirmLogout = () => {
-    setShowLogoutConfirm(false);
-    onLogout();
-  };
-
-  const cancelLogout = () => {
-    setShowLogoutConfirm(false);
-  };
 
   const menuItems = [
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
@@ -30,6 +16,7 @@ export default function Sidebar({ currentPage, onNavigate, onLogout }: SidebarPr
     { id: 'als-new-enrollees', label: 'ALS New Enrollees', icon: UserPlus },
     { id: 'new-student', label: 'New Enrollees', icon: UserPlus },
     { id: 'app-users', label: 'AppUsers', icon: User },
+    { id: 'security', label: 'Security', icon: Shield },
   ];
 
 
@@ -64,7 +51,7 @@ export default function Sidebar({ currentPage, onNavigate, onLogout }: SidebarPr
 
       <div className="mt-auto p-4">
         <button
-          onClick={handleLogoutClick}
+          onClick={onLogout}
           className="w-full rounded-xl bg-gradient-to-r from-blue-500 to-blue-700 px-4 py-2.5 font-semibold text-white shadow-md transition-all duration-300 hover:bg-blue-700 hover:shadow-lg"
         >
           Log out
@@ -72,32 +59,9 @@ export default function Sidebar({ currentPage, onNavigate, onLogout }: SidebarPr
       </div>
 
       <div className="p-3 text-xs text-slate-400 text-center">
-        <p>@2025, developed by SIRIUS</p>
+        <p>@2025, developed by SIRI.JS</p>
         <p>for a better desktop.</p>
       </div>
-
-      {showLogoutConfirm && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 max-w-sm mx-4">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Confirm Logout</h3>
-            <p className="text-gray-600 mb-6">Are you sure you want to log out?</p>
-            <div className="flex space-x-3">
-              <button
-                onClick={cancelLogout}
-                className="flex-1 px-4 py-2 text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300 transition-colors"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={confirmLogout}
-                className="flex-1 px-4 py-2 text-white bg-red-600 rounded-md hover:bg-red-700 transition-colors"
-              >
-                Logout
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </aside>
   );
 }
