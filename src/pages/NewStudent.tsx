@@ -311,7 +311,7 @@ export default function NewStudent() {
           </div>
 
 
-          <div className="bg-white p-6 rounded-xl shadow-md flex-grow">
+          <div className="bg-white p-6 rounded-xl shadow-md flex-grow hover:scale-[1.02] transition-transform duration-300 cursor-pointer">
             <div className="border-b-2 border-gray-300 pb-2 mb-4">
               <h2 className="text-lg font-bold text-gray-600">LIST OF ALL NEW ENROLLEES:</h2>
             </div>

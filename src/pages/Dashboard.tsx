@@ -121,7 +121,7 @@ export default function Dashboard({ onNavigate }: { onNavigate: (page: string) =
           </header>
 
           <div className="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-5 gap-6 mb-8">
-            <div className="bg-white p-6 h-40 rounded-xl shadow-md flex items-center justify-between">
+            <div className="bg-white p-6 h-40 rounded-xl shadow-md flex items-center justify-between hover:scale-105 transition-transform duration-300 cursor-pointer">
               <div>
                 <p className="font-bold text-gray-600 uppercase">STEM STUDENTS</p>
                 <p className="text-4xl font-semibold text-gray-600 mt-2">{stats.stem}</p>
@@ -133,7 +133,7 @@ export default function Dashboard({ onNavigate }: { onNavigate: (page: string) =
               </div>
             </div>
 
-            <div className="bg-white p-6 h-40 rounded-xl shadow-md flex items-center justify-between">
+            <div className="bg-white p-6 h-40 rounded-xl shadow-md flex items-center justify-between hover:scale-105 transition-transform duration-300 cursor-pointer">
               <div>
                 <p className="font-bold text-gray-600 uppercase">ABM STUDENTS</p>
                 <p className="text-4xl font-semibold text-gray-600 mt-2">{stats.abm}</p>
@@ -145,7 +145,7 @@ export default function Dashboard({ onNavigate }: { onNavigate: (page: string) =
               </div>
             </div>
 
-            <div className="bg-white p-6 h-40 rounded-xl shadow-md flex items-center justify-between">
+            <div className="bg-white p-6 h-40 rounded-xl shadow-md flex items-center justify-between hover:scale-105 transition-transform duration-300 cursor-pointer">
               <div>
                 <p className="font-bold text-gray-600 uppercase">TVL-ICT STUDENTS</p>
                 <p className="text-4xl font-semibold text-gray-600 mt-2">{stats.tvlIct}</p>
@@ -158,7 +158,7 @@ export default function Dashboard({ onNavigate }: { onNavigate: (page: string) =
               </div>
             </div>
 
-            <div className="bg-white p-6 h-40 rounded-xl shadow-md flex items-center justify-between">
+            <div className="bg-white p-6 h-40 rounded-xl shadow-md flex items-center justify-between hover:scale-105 transition-transform duration-300 cursor-pointer">
               <div>
                 <p className="font-bold text-gray-600 uppercase">HUMSS STUDENTS</p>
                 <p className="text-4xl font-semibold text-gray-600 mt-2">{stats.humss}</p>
@@ -172,7 +172,7 @@ export default function Dashboard({ onNavigate }: { onNavigate: (page: string) =
               </div>
             </div>
 
-            <div className="bg-white p-6 h-40 rounded-xl shadow-md flex items-center justify-between">
+            <div className="bg-white p-6 h-40 rounded-xl shadow-md flex items-center justify-between hover:scale-105 transition-transform duration-300 cursor-pointer">
               <div>
                 <p className="font-bold text-gray-600 uppercase">ALS STUDENTS</p>
                 <p className="text-4xl font-semibold text-gray-600 mt-2">{stats.alsEnrolled}</p>
@@ -186,7 +186,7 @@ export default function Dashboard({ onNavigate }: { onNavigate: (page: string) =
           </div>
 
           <div className="flex flex-col gap-8">
-            <div className="bg-white p-6 rounded-xl shadow-md flex-grow">
+            <div className="bg-white p-6 rounded-xl shadow-md flex-grow hover:scale-[1.02] transition-transform duration-300 cursor-pointer">
               <div className="flex justify-between items-center border-b-2 border-gray-300 pb-2 mb-4">
                 <h2 className="text-lg font-bold text-gray-600">RECENT ENROLLMENT APPLICATIONS:</h2>
                 <button
@@ -227,7 +227,7 @@ export default function Dashboard({ onNavigate }: { onNavigate: (page: string) =
             </div>
           </div>
 
-          <div className="mt-8 bg-white p-6 rounded-xl shadow-md flex-grow">
+          <div className="mt-8 bg-white p-6 rounded-xl shadow-md flex-grow hover:scale-[1.02] transition-transform duration-300 cursor-pointer">
             <div className="flex justify-between items-center border-b-2 border-gray-300 pb-2 mb-4">
               <h2 className="text-lg font-bold text-gray-600">RECENT ALS ENROLLMENT APPLICATIONS:</h2>
               <button
@@ -265,7 +265,7 @@ export default function Dashboard({ onNavigate }: { onNavigate: (page: string) =
             </div>
           </div>
 
-          <div className="bg-white p-6 rounded-xl shadow-lg xl:w-1/3 mt-8">
+          <div className="bg-white p-6 rounded-xl shadow-lg xl:w-1/3 mt-8 hover:scale-[1.02] transition-transform duration-300 cursor-pointer">
             <div className="border-b-2 border-gray-400 pb-2 mb-4">
               <h2 className="text-lg font-bold text-gray-600">NO. OF ENROLLMENT APPLICATIONS:</h2>
             </div>

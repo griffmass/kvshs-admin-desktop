@@ -264,7 +264,7 @@ export default function AppUsers() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-            <div className="bg-white p-6 h-40 rounded-xl shadow-md flex items-center justify-between">
+            <div className="bg-white p-6 h-40 rounded-xl shadow-md flex items-center justify-between hover:scale-[1.02] transition-transform duration-300 cursor-pointer">
               <div>
                 <p className="font-bold text-gray-600 uppercase">PENDING USERS</p>
                 <p className="text-4xl font-semibold text-gray-600 mt-2">{stats.pending}</p>
@@ -276,7 +276,7 @@ export default function AppUsers() {
               </div>
             </div>
 
-            <div className="bg-white p-6 h-40 rounded-xl shadow-md flex items-center justify-between">
+            <div className="bg-white p-6 h-40 rounded-xl shadow-md flex items-center justify-between hover:scale-[1.02] transition-transform duration-300 cursor-pointer">
               <div>
                 <p className="font-bold text-gray-600 uppercase">APPROVED USERS</p>
                 <p className="text-4xl font-semibold text-gray-600 mt-2">{stats.approved}</p>
@@ -289,7 +289,7 @@ export default function AppUsers() {
             </div>
           </div>
 
-          <div className="bg-white p-6 rounded-xl shadow-md flex-grow">
+          <div className="bg-white p-6 rounded-xl shadow-md flex-grow hover:scale-[1.02] transition-transform duration-300 cursor-pointer">
             <div className="flex items-center justify-between gap-4 mb-4">
               <div className="border-b-2 border-gray-300 pb-2">
                 <h2 className="text-lg font-bold text-gray-600">LIST OF ALL APP USERS:</h2>
