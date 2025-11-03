@@ -1,5 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
 import dotenv from 'dotenv';
+import bcrypt from 'bcrypt';
 
 // Load environment variables from .env file
 dotenv.config();
@@ -21,9 +22,10 @@ export const supabaseAdmin = createClient(supabaseUrl, supabaseServiceRoleKey, {
 // Admin functions that will be moved to Edge Functions
 export const adminFunctions = {
   updateUserPassword: async (userId, newPassword) => {
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
     const { data, error } = await supabaseAdmin
       .from('admin')
-      .update({ password: newPassword, updated_at: new Date().toISOString() })
+      .update({ password: hashedPassword, updated_at: new Date().toISOString() })
       .eq('id', parseInt(userId, 10))
       .select()
       .single();
@@ -91,7 +93,8 @@ export const adminFunctions = {
 
     if (error) throw error;
 
-    if (password !== data.password) {
+    const isPasswordValid = await bcrypt.compare(password, data.password);
+    if (!isPasswordValid) {
       throw new Error('Invalid email or password');
     }
 
