@@ -6,13 +6,11 @@ import { useAuth } from "../contexts/AuthContext";
 // Electron API types are declared in AuthContext.tsx
 
 export default function ChangePassword() {
-  const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
-  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const navigate = useNavigate();
@@ -22,7 +20,7 @@ export default function ChangePassword() {
     e.preventDefault();
     setError("");
 
-    if (newPassword !== confirmPassword) {
+    if (newPassword.trim() !== confirmPassword.trim()) {
       setError("Passwords do not match");
       return;
     }
@@ -40,17 +38,6 @@ export default function ChangePassword() {
     setLoading(true);
 
     try {
-      // First verify current password
-      const loginResult = await window.electronAPI.loginAdmin(
-        user.email,
-        currentPassword
-      );
-      if (!loginResult.success) {
-        setError("Current password is incorrect");
-        setLoading(false);
-        return;
-      }
-
       // Update password using admin API with the current user ID
       const updateResult = await window.electronAPI.updateUserPassword(
         user.id.toString(),
@@ -132,45 +119,12 @@ export default function ChangePassword() {
               </div>
 
               <p className="text-gray-600 mb-8">
-                Enter your current password and choose a new password.
+                Choose a new password.
               </p>
 
               {error && <p className="text-red-500 mb-4 text-sm">{error}</p>}
 
               <form onSubmit={handleSubmit} className="space-y-6">
-                <div>
-                  <label
-                    htmlFor="currentPassword"
-                    className="block text-sm font-medium text-gray-700 mb-2"
-                  >
-                    Current Password
-                  </label>
-                  <div className="relative">
-                    <input
-                      type={showCurrentPassword ? "text" : "password"}
-                      id="currentPassword"
-                      value={currentPassword}
-                      onChange={(e) => setCurrentPassword(e.target.value)}
-                      className="w-full p-3 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 transition duration-200"
-                      placeholder="Enter current password"
-                      required
-                    />
-                    <button
-                      type="button"
-                      onClick={() =>
-                        setShowCurrentPassword(!showCurrentPassword)
-                      }
-                      className="absolute inset-y-0 right-0 flex items-center pr-3 cursor-pointer hover:opacity-80 transition"
-                    >
-                      {showCurrentPassword ? (
-                        <EyeOff size={24} />
-                      ) : (
-                        <Eye size={24} />
-                      )}
-                    </button>
-                  </div>
-                </div>
-
                 <div>
                   <label
                     htmlFor="newPassword"
