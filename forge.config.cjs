@@ -2,9 +2,14 @@ const { FusesPlugin } = require('@electron-forge/plugin-fuses');
 const { FuseV1Options, FuseVersion } = require('@electron/fuses');
 
 module.exports = {
+  // --- THIS IS THE FIX ---
   packagerConfig: {
     asar: true,
+    // This tells Electron Forge to copy the 'public' folder 
+    // into the final packaged application's resources directory.
+    extraResource: ['./public'], 
   },
+  // ---------------------
   rebuildConfig: {},
   makers: [
     {
@@ -29,8 +34,6 @@ module.exports = {
       name: '@electron-forge/plugin-auto-unpack-natives',
       config: {},
     },
-    // Fuses are used to enable/disable various Electron functionality
-    // at package time, before code signing the application
     new FusesPlugin({
       version: FuseVersion.V1,
       [FuseV1Options.RunAsNode]: false,
