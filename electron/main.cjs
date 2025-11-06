@@ -3,12 +3,18 @@ const path = require('path');
 const url = require('url');
 const adminFunctions = require('./adminFunctions.cjs');
 
+// --- THIS IS THE FIX ---
+// Load environment variables from .env file
+require('dotenv').config();
+// ---------------------
+
 // Addresses potential rendering issues on some hardware
 app.disableHardwareAcceleration();
 
 let mainWindow;
 
 function createWindow() {
+  // ... (rest of the file remains the same)
   mainWindow = new BrowserWindow({
     width: 1400,
     height: 900,
@@ -43,7 +49,7 @@ function createWindow() {
   });
 }
 
-// This function will be called when Electron has finished initialization
+// ... (the rest of your main.cjs file is unchanged)
 app.whenReady().then(() => {
   createWindow();
 
