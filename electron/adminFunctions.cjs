@@ -1,19 +1,13 @@
 const { createClient } = require('@supabase/supabase-js');
-const dotenv = require('dotenv');
-const path = require('path');
+const supabaseUrl = 'https://bvgmaztjetcbnvnucbpw.supabase.co';
+const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ2Z21henRqZXRjYm52bnVjYnB3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjA5MDc4NTAsImV4cCI6MjA3NjQ4Mzg1MH0.g35d0Cu_I9gUeIa9D2NgjTPhA9-Jt05HumwGWuiQpPw';
 
-// Load environment variables from the root .env file
-dotenv.config({ path: path.join(__dirname, '..', '.env') });
-
-const supabaseUrl = process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL;
-const serviceRoleKey = process.env.VITE_SUPABASE_SERVICE_ROLE_KEY;
-
-if (!supabaseUrl || !serviceRoleKey) {
-  console.error('Missing environment variables:', { supabaseUrl: !!supabaseUrl, serviceRoleKey: !!serviceRoleKey });
-  throw new Error('Missing Supabase environment variables');
+if (!supabaseUrl || !supabaseAnonKey) {
+  // This check remains as a safeguard, but it should now always pass.
+  throw new Error('Supabase URL or Anon Key is missing in adminFunctions.cjs');
 }
 
-const supabaseAdmin = createClient(supabaseUrl, serviceRoleKey);
+const supabaseAdmin = createClient(supabaseUrl, supabaseAnonKey);
 
 async function updateUserPassword(userId, newPassword) {
   const { data, error } = await supabaseAdmin

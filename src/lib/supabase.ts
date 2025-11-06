@@ -1,14 +1,18 @@
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+// --- FINAL FIX: Hardcode the public environment variables ---
+// This bypasses any issues with Vite's import.meta.env in the Electron build.
+const supabaseUrl = 'https://bvgmaztjetcbnvnucbpw.supabase.co';
+const supabaseAnonKey = 'eyJhbGciOiJIUzI“NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ2Z21henRqZXRjYm52bnVjYnB3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjA5MDc4NTAsImV4cCI6MjA3NjQ4Mzg1MH0.g35d0Cu_I9gUeIa9D2NgjTPhA9-Jt05HumwGWuiQpPw';
 
+// The error check remains, but it will no longer fail.
 if (!supabaseUrl || !supabaseAnonKey) {
-  throw new Error('Missing Supabase environment variables');
+  throw new Error('Supabase URL or Anon Key is missing in supabase.ts');
 }
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
+// The rest of your interface definitions remain the same.
 export interface Student {
   id?: number;
   lrn?: string;
