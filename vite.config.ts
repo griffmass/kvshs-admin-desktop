@@ -7,6 +7,9 @@ export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
 
   return {
+    // --- ADD THIS LINE ---
+    base: './', 
+    // --------------------
     plugins: [react()],
     server: {
       hmr: false,
