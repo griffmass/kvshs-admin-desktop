@@ -1,10 +1,14 @@
 const { createClient } = require('@supabase/supabase-js');
-const supabaseUrl = 'https://bvgmaztjetcbnvnucbpw.supabase.co';
-const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ2Z21henRqZXRjYm52bnVjYnB3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjA5MDc4NTAsImV4cCI6MjA3NjQ4Mzg1MH0.g35d0Cu_I9gUeIa9D2NgjTPhA9-Jt05HumwGWuiQpPw';
+
+// --- THIS IS THE FIX ---
+// Read Supabase credentials from environment variables
+const supabaseUrl = process.env.SUPABASE_URL;
+const supabaseAnonKey = process.env.SUPABASE_ANON_KEY;
+// ---------------------
 
 if (!supabaseUrl || !supabaseAnonKey) {
-  // This check remains as a safeguard, but it should now always pass.
-  throw new Error('Supabase URL or Anon Key is missing in adminFunctions.cjs');
+  // This check is now very important and will tell you if your .env file is not loaded.
+  throw new Error('Supabase URL or Anon Key is missing. Make sure you have a .env file with SUPABASE_URL and SUPABASE_ANON_KEY.');
 }
 
 const supabaseAdmin = createClient(supabaseUrl, supabaseAnonKey);
