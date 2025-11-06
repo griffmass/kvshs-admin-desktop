@@ -1,13 +1,11 @@
 const { createClient } = require('@supabase/supabase-js');
 
-// --- THIS IS THE FIX ---
-// Read Supabase credentials from environment variables
+// Read Supabase credentials from environment variables loaded in main.cjs
 const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseAnonKey = process.env.SUPABASE_ANON_KEY;
-// ---------------------
 
+// This check will now fire if the .env file is not found in production
 if (!supabaseUrl || !supabaseAnonKey) {
-  // This check is now very important and will tell you if your .env file is not loaded.
   throw new Error('Supabase URL or Anon Key is missing. Make sure you have a .env file with SUPABASE_URL and SUPABASE_ANON_KEY.');
 }
 
