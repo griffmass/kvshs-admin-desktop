@@ -41,12 +41,12 @@ This project is a desktop admin dashboard for KVSHS. It uses modern web technolo
 <h3>Built With</h3>
 This project was built using the following technologies:
 
-* [Electron.js](https://www.electronjs.org/): For building the native desktop application.
-* [Vite](https://vitejs.dev/): As the frontend build tool and development server.
-* [React](https://reactjs.org/): For building the user interface.
-* [TypeScript](https://www.typescriptlang.org/): For static typing.
-* [Tailwind CSS](https://tailwindcss.com/): For utility-first styling.
-* [Supabase](https://supabase.com/): For the database and authentication backend.
+- [Electron.js](https://www.electronjs.org/): For building the native desktop application.
+- [Vite](https://vitejs.dev/): As the frontend build tool and development server.
+- [React](https://reactjs.org/): For building the user interface.
+- [TypeScript](https://www.typescriptlang.org/): For static typing.
+- [Tailwind CSS](https://tailwindcss.com/): For utility-first styling.
+- [Supabase](https://supabase.com/): For the database and authentication backend.
 
 <h3>Getting Started</h3>
 To get a local copy up and running, please follow these simple steps.
@@ -54,9 +54,11 @@ To get a local copy up and running, please follow these simple steps.
 <h3>Prerequisites</h3>
 
 Ensure you have Node.js installed on your system.
-* [Node.js (LTS)](https://nodejs.org/en/download/)
+
+- [Node.js (LTS)](https://nodejs.org/en/download/)
 
 After installation, verify that `node` and `npm` are available in your terminal:
+
 ```bash
 node -v
 npm -v
@@ -74,6 +76,7 @@ cd kvshs-enrollment-management
 **2. Install NPM Packages**
 
 This will install Electron and all other necessary development dependencies.
+
 ```
 npm install
 ```
@@ -85,6 +88,7 @@ This project requires a connection to a Supabase database.
 1. Find the .env file in the root of the project. (If it's missing, you may need to create it).
 
 2. Open it and add the required Supabase API credentials:
+
 ```
 VITE_SUPABASE_URL=YOUR_SUPABASE_URL_HERE
 VITE_SUPABASE_ANON_KEY=YOUR_SUPABASE_ANON_KEY_HERE
@@ -95,15 +99,54 @@ VITE_SUPABASE_ANON_KEY=YOUR_SUPABASE_ANON_KEY_HERE
 <h3>Usage</h3>
 
 To run the application in development mode, use the following command:
+
 ```
 npm run electron:dev
 ```
 
 This command will automatically:
 
-1. Start the Vite development server for the React UI.
+1.  Start the Vite development server for the React UI.
+2.  Launch the Electron desktop application, which will load the UI.
 
-2. Launch the Electron desktop application, which will load the UI.
+### Building for Production
+
+This project uses **Electron Forge** to build and package the application for distribution.
+
+**1. First-Time Setup (if not already done)**
+
+If you haven't set up Electron Forge for this project yet, run the following commands:
+
+```bash
+# Install the Electron Forge CLI
+npm install --save-dev @electron-forge/cli
+
+# Import the project into Electron Forge
+npx electron-forge import
+```
+
+**2. Build and Package**
+
+To create a distributable package, run the following commands in order:
+
+```bash
+# First, build the React frontend
+npm run build
+
+# Then, package the Electron app
+npm run make
+```
+
+This will generate an `out` folder containing the packaged application for your operating system (e.g., `out/student-management-electron-win32-x64` for Windows).
+
+**3. Post-Build Configuration**
+
+For the packaged application to connect to the Supabase backend, you **must** manually copy your `.env` file from the project root into the final application directory.
+
+For example, on a 64-bit Windows build, copy the `.env` file to:
+`out\student-management-electron-win32-x64\`
+
+The application will not function correctly without this step.
 
 <h3>License</h3>
 
