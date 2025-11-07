@@ -88,10 +88,18 @@ async function loginAdmin(email, password) {
   return { id: adminUser.id, email: adminUser.email };
 }
 
+async function generateResetToken(userId) {
+  // For a custom auth flow, we don't need a complex Supabase token.
+  // A simple timestamp or a random string is enough to validate the next step.
+  // We'll just use a timestamp as a placeholder "token".
+  return { token: Date.now().toString() };
+}
+
 module.exports = {
   updateUserPassword,
   getUserByEmail,
   storeOTP,
   verifyOTP,
   loginAdmin,
+  generateResetToken,
 };
