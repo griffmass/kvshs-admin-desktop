@@ -1,10 +1,12 @@
 const { createClient } = require('@supabase/supabase-js');
-const supabaseUrl = 'https://bvgmaztjetcbnvnucbpw.supabase.co';
-const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ2Z21henRqZXRjYm52bnVjYnB3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjA5MDc4NTAsImV4cCI6MjA3NjQ4Mzg1MH0.g35d0Cu_I9gUeIa9D2NgjTPhA9-Jt05HumwGWuiQpPw';
 
+// Read Supabase credentials from environment variables loaded in main.cjs
+const supabaseUrl = process.env.SUPABASE_URL;
+const supabaseAnonKey = process.env.SUPABASE_ANON_KEY;
+
+// This check will now fire if the .env file is not found in production
 if (!supabaseUrl || !supabaseAnonKey) {
-  // This check remains as a safeguard, but it should now always pass.
-  throw new Error('Supabase URL or Anon Key is missing in adminFunctions.cjs');
+  throw new Error('Supabase URL or Anon Key is missing. Make sure you have a .env file with SUPABASE_URL and SUPABASE_ANON_KEY.');
 }
 
 const supabaseAdmin = createClient(supabaseUrl, supabaseAnonKey);
@@ -86,10 +88,18 @@ async function loginAdmin(email, password) {
   return { id: adminUser.id, email: adminUser.email };
 }
 
+async function generateResetToken(userId) {
+  // For a custom auth flow, we don't need a complex Supabase token.
+  // A simple timestamp or a random string is enough to validate the next step.
+  // We'll just use a timestamp as a placeholder "token".
+  return { token: Date.now().toString() };
+}
+
 module.exports = {
   updateUserPassword,
   getUserByEmail,
   storeOTP,
   verifyOTP,
   loginAdmin,
+  generateResetToken,
 };

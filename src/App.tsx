@@ -1,6 +1,5 @@
 import { useState } from 'react';
-// Change BrowserRouter to HashRouter
-import { HashRouter as Router, Routes, Route, Navigate } from 'react-router-dom'; 
+import { HashRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import Sidebar from './components/Sidebar';
 import Dashboard from './pages/Dashboard';
@@ -57,14 +56,12 @@ function AppContent() {
     return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
   }
 
-  // If user is logged in, show dashboard directly
   if (user) {
     return (
       <div className="flex h-screen relative overflow-hidden">
-        {/* Main container for the two-part background */}
         <div className="absolute inset-0 -z-10">
           <div className="w-full h-[450px] bg-gradient-to-br from-blue-500 to-blue-50"></div>
-          <div className="w-full h-full bg-gray-100 -mt-[2px]"></div> {/* Clean overlap */}
+          <div className="w-full h-full bg-gray-100 -mt-[2px]"></div>
         </div>
         <Sidebar currentPage={currentPage} onNavigate={setCurrentPage} onLogout={handleLogoutClick} />
         <main className="ml-48 flex-1 overflow-hidden">
@@ -83,11 +80,9 @@ function AppContent() {
                     &times;
                   </button>
                 </div>
-
                 <div className="mb-6">
                   <p className="text-gray-600 text-lg">Are you sure you want to log out?</p>
                 </div>
-
                 <div className="flex justify-end gap-3 pt-4">
                   <button
                     onClick={handleLogoutCancel}
@@ -110,7 +105,6 @@ function AppContent() {
     );
   }
 
-  // If no user, show auth routes
   return (
     <Routes>
       <Route path="/login" element={<Login />} />
