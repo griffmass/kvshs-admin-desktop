@@ -2,14 +2,12 @@ const { FusesPlugin } = require('@electron-forge/plugin-fuses');
 const { FuseV1Options, FuseVersion } = require('@electron/fuses');
 
 module.exports = {
-  // --- THIS IS THE FIX ---
   packagerConfig: {
     asar: true,
     // This tells Electron Forge to copy the 'public' folder 
     // into the final packaged application's resources directory.
-    extraResource: ['./public'], 
+    extraResource: ['./public'],
   },
-  // ---------------------
   rebuildConfig: {},
   makers: [
     {
