@@ -2,7 +2,6 @@ const { app, BrowserWindow, ipcMain } = require("electron");
 const path = require("path");
 const url = require("url");
 
-// This logic correctly finds the .env file whether the app is packaged or in development.
 const envPath = app.isPackaged
   ? path.join(path.dirname(app.getPath("exe")), ".env")
   : path.join(__dirname, "..", ".env");
@@ -11,7 +10,6 @@ require("dotenv").config({ path: envPath });
 
 const adminFunctions = require("./adminFunctions.cjs");
 
-// Addresses potential rendering issues on some hardware
 app.disableHardwareAcceleration();
 
 let mainWindow;
@@ -22,7 +20,9 @@ function createWindow() {
     height: 900,
     minWidth: 1200,
     minHeight: 700,
-    icon: path.join(__dirname, "../public/Logo.png"),
+    // --- FIX: Use favicon.ico instead of Logo.png ---
+    icon: path.join(__dirname, "../public/favicon.ico"),
+    // ------------------------------------------------
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,
@@ -62,7 +62,7 @@ app.whenReady().then(() => {
     }
   });
 
-  // --- All IPC Handlers ---
+  // --- IPC Handlers ---
   ipcMain.handle("login-admin", async (event, email, password) => {
     try {
       const user = await adminFunctions.loginAdmin(email, password);
@@ -99,44 +99,25 @@ app.whenReady().then(() => {
     }
   });
 
-  ipcMain.handle(
-    "update-user-password",
-    async (event, { userId, newPassword }) => {
-      try {
-        const result = await adminFunctions.updateUserPassword(
-          userId,
-          newPassword
-        );
-        return { success: true, data: result };
-      } catch (error) {
-        return { success: false, error: error.message };
-      }
+  ipcMain.handle("update-user-password", async (event, { userId, newPassword }) => {
+    try {
+      const result = await adminFunctions.updateUserPassword(userId, newPassword);
+      return { success: true, data: result };
+    } catch (error) {
+      return { success: false, error: error.message };
     }
-  );
+  });
 
   ipcMain.handle("generate-reset-token", async (event, userId) => {
     try {
       const result = await adminFunctions.generateResetToken(userId);
-      // The result from adminFunctions already contains the token
       return { success: true, token: result.token };
     } catch (error) {
       return { success: false, error: error.message };
     }
   });
- 
-  ipcMain.handle("generate-reset-token", async (event, userId) => {
-    try {
-      const result = await adminFunctions.generateResetToken(userId);
-      // The result from adminFunctions now contains our simple token
-      return { success: true, token: result.token };
-    } catch (error) {
-      return { success: false, error: error.message };
-    }
-  });  
 });
 
 app.on("window-all-closed", () => {
-  if (process.platform !== "darwin") {
-    app.quit();
-  }
+  if (process.platform !== "darwin") app.quit();
 });
