@@ -38,7 +38,6 @@ export default function ChangePassword() {
     setLoading(true);
 
     try {
-      // Update password using admin API with the current user ID
       const updateResult = await window.electronAPI.updateUserPassword(
         user.id.toString(),
         newPassword
@@ -46,7 +45,6 @@ export default function ChangePassword() {
       if (!updateResult.success) {
         setError(updateResult.error || "Failed to update password.");
       } else {
-        // Refresh user data to ensure consistency
         refreshUser();
         setSuccess(true);
         setTimeout(() => {
@@ -65,31 +63,28 @@ export default function ChangePassword() {
     return (
       <div className="min-h-screen w-screen flex items-center justify-center p-4 bg-gradient-to-br from-blue-100 to-blue-300">
         <div className="w-full max-w-md bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl shadow-2xl overflow-hidden border border-blue-300">
-          <div className="p-8 md:p-12">
-            <div className="text-center">
-              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <svg
-                  className="w-8 h-8 text-green-600"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M5 13l4 4L19 7"
-                  />
-                </svg>
-              </div>
-              <h2 className="text-2xl font-bold text-gray-800 mb-2">
-                Password Changed!
-              </h2>
-              <p className="text-gray-600 mb-6">
-                Your password has been successfully changed. You will be
-                redirected to the dashboard shortly.
-              </p>
+          <div className="p-8 md:p-12 text-center">
+            <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <svg
+                className="w-8 h-8 text-green-600"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M5 13l4 4L19 7"
+                />
+              </svg>
             </div>
+            <h2 className="text-2xl font-bold text-gray-800 mb-2">
+              Password Changed!
+            </h2>
+            <p className="text-gray-600 mb-6">
+              Your password has been successfully changed. You will be redirected to the dashboard shortly.
+            </p>
           </div>
         </div>
       </div>
@@ -106,13 +101,16 @@ export default function ChangePassword() {
       <div className="flex-1 flex flex-col min-h-screen ml-68 overflow-y-auto">
         <div className="flex items-center justify-center min-h-screen p-4">
           <div className="w-full max-w-4xl bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl shadow-2xl overflow-hidden border border-blue-300 grid md:grid-cols-2">
+            {/* LEFT PANEL */}
             <div className="p-8 md:p-12">
               <div className="flex items-center gap-3 mb-8">
+                {/* --- FIX: Use favicon.ico --- */}
                 <img
-                  src="/src/assets/Logo.png"
+                  src="/favicon.ico"
                   alt="School Logo"
                   className="w-10 h-10"
                 />
+                {/* ---------------------------- */}
                 <h1 className="text-2xl font-bold text-gray-600">
                   Change Password
                 </h1>
@@ -125,6 +123,7 @@ export default function ChangePassword() {
               {error && <p className="text-red-500 mb-4 text-sm">{error}</p>}
 
               <form onSubmit={handleSubmit} className="space-y-6">
+                {/* New Password */}
                 <div>
                   <label
                     htmlFor="newPassword"
@@ -147,15 +146,12 @@ export default function ChangePassword() {
                       onClick={() => setShowNewPassword(!showNewPassword)}
                       className="absolute inset-y-0 right-0 flex items-center pr-3 cursor-pointer hover:opacity-80 transition"
                     >
-                      {showNewPassword ? (
-                        <EyeOff size={24} />
-                      ) : (
-                        <Eye size={24} />
-                      )}
+                      {showNewPassword ? <EyeOff size={24} /> : <Eye size={24} />}
                     </button>
                   </div>
                 </div>
 
+                {/* Confirm Password */}
                 <div>
                   <label
                     htmlFor="confirmPassword"
@@ -175,20 +171,15 @@ export default function ChangePassword() {
                     />
                     <button
                       type="button"
-                      onClick={() =>
-                        setShowConfirmPassword(!showConfirmPassword)
-                      }
+                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                       className="absolute inset-y-0 right-0 flex items-center pr-3 cursor-pointer hover:opacity-80 transition"
                     >
-                      {showConfirmPassword ? (
-                        <EyeOff size={24} />
-                      ) : (
-                        <Eye size={24} />
-                      )}
+                      {showConfirmPassword ? <EyeOff size={24} /> : <Eye size={24} />}
                     </button>
                   </div>
                 </div>
 
+                {/* Submit Button */}
                 <button
                   type="submit"
                   disabled={loading}
@@ -199,6 +190,7 @@ export default function ChangePassword() {
               </form>
             </div>
 
+            {/* RIGHT PANEL */}
             <div className="hidden md:flex flex-col bg-gradient-to-br from-blue-500 to-blue-700 p-8 md:p-12 text-white">
               <div className="flex-grow flex items-center justify-center">
                 <svg
