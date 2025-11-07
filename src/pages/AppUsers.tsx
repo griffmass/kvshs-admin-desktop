@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabase';
-import { Trash2, CheckCircle, Plus, Search } from 'lucide-react';
+import { Trash2, CheckCircle, Plus, Search, Eye, EyeOff } from 'lucide-react';
 import emailjs from '@emailjs/browser';
 
 interface AppUser {
@@ -19,6 +19,7 @@ export default function AppUsers() {
     full_name: '',
     password: ''
   });
+  const [showPassword, setShowPassword] = useState(false);
   const [modalKey, setModalKey] = useState(0);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
@@ -39,22 +40,16 @@ export default function AppUsers() {
 
   const fetchAppUsers = async () => {
     try {
-      // Assuming there's a 'AppUsers' table in Supabase
       const { data, error } = await supabase
         .from('AppUsers')
         .select('*')
         .order('full_name', { ascending: true });
 
       if (error) throw error;
-
-      // Force a new array reference to ensure re-render
       const newData = data || [];
       setAppUsers([...newData]);
-
-      // Calculate stats
       const pendingCount = newData.filter(user => user.status === 'Pending').length || 0;
       const approvedCount = newData.filter(user => user.status === 'Approved').length || 0;
-
       setStats({
         pending: pendingCount,
         approved: approvedCount,
@@ -66,16 +61,10 @@ export default function AppUsers() {
 
   const filteredAppUsers = appUsers.filter((user) => {
     const fullName = user.full_name || '';
-    const matchesSearch = searchTerm === '' ||
+    return searchTerm === '' ||
       fullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.full_name?.toLowerCase().includes(searchTerm.toLowerCase());
-
-    return matchesSearch;
+      user.email.toLowerCase().includes(searchTerm.toLowerCase());
   });
-
-
-
 
   const handleApproveAppUser = (userEmail: string, userName?: string) => {
     setConfirmAction({
@@ -97,15 +86,11 @@ export default function AppUsers() {
 
       if (error) throw error;
 
-      // Send approval email
       const templateParams = {
         email: confirmAction.userEmail,
         user_email: confirmAction.userEmail,
       };
 
-      console.log('Sending approval email with params:', templateParams);
-
-      // Check if all required values are present
       if (!import.meta.env.VITE_EMAILJS_SERVICE_ID ||
           !import.meta.env.VITE_EMAILJS_TEMPLATE_ID ||
           !import.meta.env.VITE_EMAILJS_PUBLIC_KEY) {
@@ -119,11 +104,6 @@ export default function AppUsers() {
         import.meta.env.VITE_EMAILJS_PUBLIC_KEY
       );
 
-      console.log('Approval email sent successfully to:', confirmAction.userEmail);
-
-      console.log('Approval email sent successfully');
-
-      // Refresh the list
       await fetchAppUsers();
       setShowConfirmModal(false);
       setConfirmAction(null);
@@ -135,7 +115,6 @@ export default function AppUsers() {
       alert(`Error approving app user: ${err.message}`);
     }
   };
-
 
   const handleDeleteAppUser = (userEmail: string, userName?: string) => {
     setConfirmAction({
@@ -150,7 +129,6 @@ export default function AppUsers() {
     if (!confirmAction || confirmAction.type !== 'delete') return;
 
     try {
-      // Delete from AppUsers table
       const { error: deleteError } = await supabase
         .from('AppUsers')
         .delete()
@@ -158,11 +136,6 @@ export default function AppUsers() {
 
       if (deleteError) throw deleteError;
 
-      // Delete from auth.users (optional - this will prevent login)
-      // Note: This requires admin privileges in Supabase
-      // const { error: authError } = await supabase.auth.admin.deleteUser(confirmAction.userEmail);
-
-      // Refresh the list
       await fetchAppUsers();
       setModalKey(prev => prev + 1);
       setShowConfirmModal(false);
@@ -191,45 +164,29 @@ export default function AppUsers() {
           email: newUser.email,
           full_name: newUser.full_name,
           password: newUser.password,
-          status: 'Approved' // Default to approved for manually added accounts
+          status: 'Approved'
         });
 
       if (error) throw error;
 
-      // Send account activation email with credentials
       const templateParams = {
         email: newUser.email,
         user_email: newUser.email,
         user_password: newUser.password,
       };
-
-      console.log('Sending account activation email with params:', templateParams);
-      console.log('EmailJS Config:', {
-        serviceId: import.meta.env.VITE_EMAILJS_SERVICE_ID,
-        templateId: 'template_yy2u2nl',
-        publicKey: import.meta.env.VITE_EMAILJS_PUBLIC_KEY
-      });
-
-      // Check if all required values are present
+      
       if (!import.meta.env.VITE_EMAILJS_SERVICE_ID ||
           !import.meta.env.VITE_EMAILJS_TEMPLATE_ID ||
           !import.meta.env.VITE_EMAILJS_PUBLIC_KEY) {
         throw new Error('EmailJS configuration is missing. Please check your .env file.');
       }
 
-      try {
-        const result = await emailjs.send(
-          import.meta.env.VITE_EMAILJS_SERVICE_ID,
-          'template_yy2u2nl', // Account activation template
-          templateParams,
-          import.meta.env.VITE_EMAILJS_PUBLIC_KEY
-        );
-        console.log('EmailJS result:', result);
-        console.log('Account activation email sent successfully to:', newUser.email);
-      } catch (emailError) {
-        console.error('EmailJS error:', emailError);
-        throw emailError;
-      }
+      await emailjs.send(
+        import.meta.env.VITE_EMAILJS_SERVICE_ID,
+        'template_yy2u2nl', // Account activation template
+        templateParams,
+        import.meta.env.VITE_EMAILJS_PUBLIC_KEY
+      );
 
       setSuccessMessage('App user added successfully and activation email sent!');
       setShowSuccessModal(true);
@@ -525,15 +482,25 @@ export default function AppUsers() {
 
                 <div>
                   <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">Password</label>
-                  <input
-                    type="password"
-                    id="password"
-                    value={newUser.password}
-                    onChange={(e) => setNewUser({ ...newUser, password: e.target.value })}
-                    className="w-full p-3 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 transition duration-200"
-                    placeholder="Enter password"
-                    required
-                  />
+                  <div className="relative">
+                    <input
+                      type={showPassword ? "text" : "password"}
+                      id="password"
+                      value={newUser.password}
+                      onChange={(e) => setNewUser({ ...newUser, password: e.target.value })}
+                      className="w-full p-3 pr-10 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 transition duration-200"
+                      placeholder="Enter password"
+                      required
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute inset-y-0 right-0 flex items-center pr-3 cursor-pointer text-gray-500 hover:text-gray-700 transition"
+                      aria-label="Toggle password visibility"
+                    >
+                      {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                    </button>
+                  </div>
                 </div>
 
                 <div className="flex justify-end gap-3 pt-4">

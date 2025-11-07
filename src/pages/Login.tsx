@@ -3,8 +3,6 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import { Eye, EyeOff } from "lucide-react";
 
-// Electron API types are declared in AuthContext.tsx
-
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -26,10 +24,9 @@ export default function Login() {
       if (!result.success) {
         setError(result.error || "Login failed");
       } else {
-        // Login successful - set user in context and redirect
         console.log("Login successful:", result.user);
         signIn(result.user!, keepLoggedIn);
-        navigate("/"); // Use React Router navigation
+        navigate("/");
       }
     } catch (err) {
       console.error("Login error:", err);
@@ -44,14 +41,11 @@ export default function Login() {
       <div className="w-full max-w-4xl bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl shadow-2xl overflow-hidden border border-blue-300 grid md:grid-cols-2">
         <div className="p-8 md:p-12">
           <div className="flex items-center gap-3 mb-8">
-            {/* --- THIS IS THE FIX --- */}
-            {/* The path now correctly points to the asset in the public folder. */}
             <img
-              src="/Logo.png"
+              src="/favicon.ico"
               alt="School Logo"
               className="w-10 h-10"
             />
-            {/* --------------------- */}
             <h1 className="text-2xl font-bold text-gray-600">
               KVSHS Admin Login
             </h1>
