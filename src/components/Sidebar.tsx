@@ -33,7 +33,9 @@ export default function Sidebar({
     <aside className="fixed top-0 left-0 h-screen w-64 bg-white shadow-lg flex flex-col p-4">
       <div className="flex items-center gap-3 p-4 border-b border-gray-200">
         <img src={schoolLogo} alt="KVSHS Logo" className="h-10 w-10" />
-        <span className="text-xl font-bold text-gray-700">KVSHS Admin</span>
+        <span className="text-xl font-bold text-gray-700 whitespace-nowrap">
+          KVSHS Admin
+        </span>
       </div>
 
       <nav className="flex-grow mt-6 space-y-2">

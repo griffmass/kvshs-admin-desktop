@@ -64,7 +64,7 @@ function AppContent() {
           <div className="w-full h-full bg-gray-100 -mt-[2px]"></div>
         </div>
         <Sidebar currentPage={currentPage} onNavigate={setCurrentPage} onLogout={handleLogoutClick} />
-        <main className="ml-48 flex-1 overflow-hidden">
+        <main className="ml-48 flex-1 overflow-y-auto">
           {renderPage(currentPage)}
         </main>
         {showLogoutModal && (

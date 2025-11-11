@@ -100,9 +100,9 @@ export default function ChangePassword() {
         <div className="w-full h-full bg-gray-100 -mt-[2px]"></div>
       </div>
 
-      <div className="flex-1 flex flex-col min-h-screen ml-68 overflow-y-auto">
-        <div className="flex items-center justify-center min-h-screen p-4">
-          <div className="w-full max-w-4xl bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl shadow-2xl overflow-hidden border border-blue-300 grid md:grid-cols-2">
+      <div className="flex-1 flex flex-col min-h-screen overflow-y-auto">
+        <div className="flex-grow flex items-center justify-center p-4 w-full">
+          <div className="w-full max-w-4xl bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl shadow-2xl overflow-hidden border border-blue-300 grid md:grid-cols-2 ml-32">
             {/* LEFT PANEL */}
             <div className="p-8 md:p-12">
               <div className="flex items-center gap-3 mb-8">
