@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
 import { useAuth } from "../contexts/AuthContext";
+import schoolLogo from "/favicon.ico";
 
 // Electron API types are declared in AuthContext.tsx
 
@@ -83,7 +84,8 @@ export default function ChangePassword() {
               Password Changed!
             </h2>
             <p className="text-gray-600 mb-6">
-              Your password has been successfully changed. You will be redirected to the dashboard shortly.
+              Your password has been successfully changed. You will be
+              redirected to the dashboard shortly.
             </p>
           </div>
         </div>
@@ -104,21 +106,13 @@ export default function ChangePassword() {
             {/* LEFT PANEL */}
             <div className="p-8 md:p-12">
               <div className="flex items-center gap-3 mb-8">
-                {/* --- FIX: Use favicon.ico --- */}
-                <img
-                  src="/favicon.ico"
-                  alt="School Logo"
-                  className="w-10 h-10"
-                />
-                {/* ---------------------------- */}
+                <img src={schoolLogo} alt="School Logo" className="w-10 h-10" />
                 <h1 className="text-2xl font-bold text-gray-600">
                   Change Password
                 </h1>
               </div>
 
-              <p className="text-gray-600 mb-8">
-                Choose a new password.
-              </p>
+              <p className="text-gray-600 mb-8">Choose a new password.</p>
 
               {error && <p className="text-red-500 mb-4 text-sm">{error}</p>}
 
@@ -146,7 +140,11 @@ export default function ChangePassword() {
                       onClick={() => setShowNewPassword(!showNewPassword)}
                       className="absolute inset-y-0 right-0 flex items-center pr-3 cursor-pointer hover:opacity-80 transition"
                     >
-                      {showNewPassword ? <EyeOff size={24} /> : <Eye size={24} />}
+                      {showNewPassword ? (
+                        <EyeOff size={24} />
+                      ) : (
+                        <Eye size={24} />
+                      )}
                     </button>
                   </div>
                 </div>
@@ -171,10 +169,16 @@ export default function ChangePassword() {
                     />
                     <button
                       type="button"
-                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                      onClick={() =>
+                        setShowConfirmPassword(!showConfirmPassword)
+                      }
                       className="absolute inset-y-0 right-0 flex items-center pr-3 cursor-pointer hover:opacity-80 transition"
                     >
-                      {showConfirmPassword ? <EyeOff size={24} /> : <Eye size={24} />}
+                      {showConfirmPassword ? (
+                        <EyeOff size={24} />
+                      ) : (
+                        <Eye size={24} />
+                      )}
                     </button>
                   </div>
                 </div>

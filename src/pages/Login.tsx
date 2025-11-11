@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import { Eye, EyeOff } from "lucide-react";
+import schoolLogo from "/favicon.ico";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -41,11 +42,7 @@ export default function Login() {
       <div className="w-full max-w-4xl bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl shadow-2xl overflow-hidden border border-blue-300 grid md:grid-cols-2">
         <div className="p-8 md:p-12">
           <div className="flex items-center gap-3 mb-8">
-            <img
-              src="/favicon.ico"
-              alt="School Logo"
-              className="w-10 h-10"
-            />
+            <img src={schoolLogo} alt="School Logo" className="w-10 h-10" />
             <h1 className="text-2xl font-bold text-gray-600">
               KVSHS Admin Login
             </h1>

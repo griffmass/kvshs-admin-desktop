@@ -5,7 +5,8 @@ import {
   UserPlus,
   LogOut,
   Shield,
-} from 'lucide-react';
+} from "lucide-react";
+import schoolLogo from "/favicon.ico";
 
 interface SidebarProps {
   currentPage: string;
@@ -14,22 +15,24 @@ interface SidebarProps {
 }
 
 const navItems = [
-  { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
-  { id: 'regular-student', label: 'Regular Students', icon: Users },
-  { id: 'als-student', label: 'ALS Students', icon: BookOpen },
-  { id: 'als-new-enrollees', label: 'ALS New Enrollees', icon: UserPlus },
-  { id: 'new-student', label: 'New Enrollees', icon: UserPlus },
-  { id: 'app-users', label: 'AppUsers', icon: Users },
-  { id: 'security', label: 'Security', icon: Shield },
+  { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
+  { id: "regular-student", label: "Regular Students", icon: Users },
+  { id: "als-student", label: "ALS Students", icon: BookOpen },
+  { id: "als-new-enrollees", label: "ALS New Enrollees", icon: UserPlus },
+  { id: "new-student", label: "New Enrollees", icon: UserPlus },
+  { id: "app-users", label: "AppUsers", icon: Users },
+  { id: "security", label: "Security", icon: Shield },
 ];
 
-export default function Sidebar({ currentPage, onNavigate, onLogout }: SidebarProps) {
+export default function Sidebar({
+  currentPage,
+  onNavigate,
+  onLogout,
+}: SidebarProps) {
   return (
     <aside className="fixed top-0 left-0 h-screen w-64 bg-white shadow-lg flex flex-col p-4">
       <div className="flex items-center gap-3 p-4 border-b border-gray-200">
-        {/* --- FIX: Use favicon.ico from public --- */}
-        <img src="/favicon.ico" alt="KVSHS Logo" className="h-10 w-10" />
-        {/* ---------------------------------------- */}
+        <img src={schoolLogo} alt="KVSHS Logo" className="h-10 w-10" />
         <span className="text-xl font-bold text-gray-700">KVSHS Admin</span>
       </div>
 
@@ -40,8 +43,8 @@ export default function Sidebar({ currentPage, onNavigate, onLogout }: SidebarPr
             onClick={() => onNavigate(item.id)}
             className={`w-full flex items-center gap-4 px-4 py-3 text-left rounded-lg transition-all duration-200 ${
               currentPage === item.id
-                ? 'bg-blue-500 text-white shadow-md'
-                : 'text-gray-600 hover:bg-gray-100 hover:text-gray-800'
+                ? "bg-blue-500 text-white shadow-md"
+                : "text-gray-600 hover:bg-gray-100 hover:text-gray-800"
             }`}
           >
             <item.icon size={20} />
