@@ -21,6 +21,7 @@
   "dependencies": {
     "@emailjs/browser": "^4.4.1",
     "@supabase/supabase-js": "^2.57.4",
+    "bcryptjs": "^3.0.3",
     "dotenv": "^17.2.3",
     "electron-squirrel-startup": "^1.0.1",
     "html2canvas": "^1.4.1",

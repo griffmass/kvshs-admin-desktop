@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Eye, EyeOff } from 'lucide-react';
+import bcrypt from 'bcryptjs';
 
 // Electron API types are declared in AuthContext.tsx
 
@@ -52,8 +53,11 @@ export default function UpdatePassword() {
         return;
       }
 
+      // Hash the new password
+      const hashedPassword = await bcrypt.hash(newPassword, 10);
+
       // Update password using admin API with the verified userId
-      const updateResult = await window.electronAPI.updateUserPassword(userId, newPassword);
+      const updateResult = await window.electronAPI.updateUserPassword(userId, hashedPassword);
       if (!updateResult.success) {
         setError(updateResult.error || 'Failed to update password.');
       } else {
