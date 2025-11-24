@@ -16,10 +16,10 @@ let mainWindow;
 
 function createWindow() {
   mainWindow = new BrowserWindow({
-    width: 1400,
-    height: 900,
-    minWidth: 1200,
-    minHeight: 700,
+    width: 1920,
+    height: 1070,
+    minWidth: 1920,
+    minHeight: 1070,
     // --- FIX: Use favicon.ico instead of Logo.png ---
     icon: path.join(__dirname, "../public/favicon.ico"),
     // ------------------------------------------------

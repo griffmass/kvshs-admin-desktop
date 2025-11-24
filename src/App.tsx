@@ -3,10 +3,7 @@ import { HashRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import Sidebar from './components/Sidebar';
 import Dashboard from './pages/Dashboard';
-import NewStudent from './pages/NewStudent';
-import ALSStudent from './pages/ALSStudent';
-import ALSNewEnrollees from './pages/ALSNewEnrollees';
-import RegularStudent from './pages/RegularStudent';
+import StudentsPage from './pages/StudentsPage';
 import AppUsers from './pages/AppUsers';
 import ChangePassword from './pages/ChangePassword';
 import Login from './pages/Login';
@@ -22,14 +19,8 @@ function AppContent() {
     switch (page) {
       case 'dashboard':
         return <Dashboard onNavigate={setCurrentPage} />;
-      case 'new-student':
-        return <NewStudent />;
-      case 'als-student':
-        return <ALSStudent />;
-      case 'als-new-enrollees':
-        return <ALSNewEnrollees />;
-      case 'regular-student':
-        return <RegularStudent />;
+      case 'students':
+        return <StudentsPage />;
       case 'app-users':
         return <AppUsers />;
       case 'security':

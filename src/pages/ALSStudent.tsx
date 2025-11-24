@@ -1,12 +1,18 @@
 import { useEffect, useState, useRef } from 'react';
 import { supabase, Student } from '../lib/supabase';
-import { Search, Eye, Trash2 } from 'lucide-react';
+import { Search, Eye, Trash2, Pencil, XCircle } from 'lucide-react';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 
 export default function ALSStudent() {
+  const alphabet = "ABCDEFGHIJKLMNÑOPQRSTUVWXYZ".split("");
+  const lrnDigits = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
   const [students, setStudents] = useState<Student[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
+  const [sortAlphabetical, setSortAlphabetical] = useState('');
+  const [sortSex, setSortSex] = useState('');
+  const [sortLRN, setSortLRN] = useState('');
+  const [sortDate, setSortDate] = useState('');
   const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
   const [showModal, setShowModal] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -17,7 +23,7 @@ export default function ALSStudent() {
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
   const [confirmAction, setConfirmAction] = useState<{
-    type: 'delete';
+    type: 'delete' | 'unenroll';
     studentLrn: string | undefined;
     studentName?: string;
   } | null>(null);
@@ -33,7 +39,28 @@ export default function ALSStudent() {
       student.mname?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       (student.lrn && student.lrn.toString().includes(searchTerm));
 
-    return matchesSearch;
+    const matchesAlphabetical = sortAlphabetical === '' ||
+      (student.lname && student.lname.toLowerCase().startsWith(sortAlphabetical.toLowerCase())) ||
+      (student.fname && student.fname.toLowerCase().startsWith(sortAlphabetical.toLowerCase())) ||
+      (student.mname && student.mname.toLowerCase().startsWith(sortAlphabetical.toLowerCase()));
+
+    const matchesLRN = sortLRN === '' || (student.lrn && student.lrn.toString().startsWith(sortLRN));
+    const matchesSex = sortSex === '' || student.sex === sortSex;
+
+    return matchesSearch && matchesAlphabetical && matchesSex && matchesLRN;
+  }).sort((a, b) => {
+    if (sortDate === '') return 0;
+
+    const dateA = a.approved_at ? new Date(a.approved_at).getTime() : 0;
+    const dateB = b.approved_at ? new Date(b.approved_at).getTime() : 0;
+
+    if (sortDate === 'newest') {
+      return dateB - dateA; // Descending (newest first)
+    } else if (sortDate === 'oldest') {
+      return dateA - dateB; // Ascending (oldest first)
+    }
+
+    return 0;
   });
 
   useEffect(() => {
@@ -72,6 +99,15 @@ export default function ALSStudent() {
     setOriginalLrn(student.lrn);
     setShowModal(true);
     setIsEditing(false);
+    setHasChanges(false);
+  };
+
+  const handleEditStudent = (student: Student) => {
+    setSelectedStudent(student);
+    setEditedStudent({ ...student });
+    setOriginalLrn(student.lrn);
+    setShowModal(true);
+    setIsEditing(true);
     setHasChanges(false);
   };
 
@@ -167,6 +203,16 @@ export default function ALSStudent() {
     setShowConfirmModal(true);
   };
 
+  const handleUnenroll = (studentLrn: string | undefined, studentName?: string) => {
+    if (!studentLrn) return;
+    setConfirmAction({
+      type: 'unenroll',
+      studentLrn,
+      studentName
+    });
+    setShowConfirmModal(true);
+  };
+
   const handleConfirmDelete = async () => {
     if (!confirmAction || confirmAction.type !== 'delete') return;
 
@@ -186,6 +232,33 @@ export default function ALSStudent() {
     } catch (error) {
       console.error('Error deleting student:', error);
       alert('Failed to delete student');
+    }
+  };
+
+  const handleConfirmUnenroll = async () => {
+    if (!confirmAction || confirmAction.type !== 'unenroll') return;
+
+    try {
+      const currentTimestamp = new Date().toISOString();
+      const { error } = await supabase
+        .from('ALS')
+        .update({
+          enrollment_status: 'Pending',
+          unenrolled_at: currentTimestamp,
+          added_at: currentTimestamp
+        })
+        .eq('lrn', confirmAction.studentLrn);
+
+      if (error) throw error;
+
+      setStudents(students.filter((s) => s.lrn !== confirmAction.studentLrn));
+      setShowConfirmModal(false);
+      setConfirmAction(null);
+      setSuccessMessage('Student unenrolled successfully!');
+      setShowSuccessModal(true);
+    } catch (error) {
+      console.error('Error unenrolling student:', error);
+      alert('Failed to unenroll student');
     }
   };
 
@@ -263,126 +336,164 @@ export default function ALSStudent() {
   };
 
   return (
-    <div className="relative flex min-h-screen overflow-hidden">
-      <div className="absolute left-68 inset-y-0 right-0 -z-10">
-        <div className="w-full h-full bg-white"></div>
+    <div className="w-full">
+      <div className="border-b-2 border-gray-300 pb-2 mb-4">
+        <h2 className="text-lg font-bold text-gray-800">LIST OF ALL ALS STUDENTS:</h2>
       </div>
-
-      <div className="flex-1 flex flex-col min-h-screen ml-68 overflow-y-auto">
-        <div className="p-4 pl-32 pt-12">
-          <div className="mb-6 flex justify-between items-center">
-            <h1 className="text-2xl font-bold text-white">ALS Students</h1>
-          </div>
-
-
-          <div className="bg-white p-6 rounded-xl shadow-md flex-grow hover:scale-[1.02] transition-transform duration-300 cursor-pointer">
-            <div className="border-b-2 border-gray-300 pb-2 mb-4">
-              <h2 className="text-lg font-bold text-gray-600">LIST OF ALL ALS STUDENTS:</h2>
-            </div>
-            <div className="flex items-center justify-between gap-4 mb-4">
-              <div className="flex items-center gap-4">
-                <span className="text-sm text-gray-600 font-medium">SORT BY:</span>
-                <select
-                  className="px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition duration-200 shadow-sm"
-                >
-                  <option value="">STRAND</option>
-                  <option value="ALS">ALS</option>
-                </select>
-                <select
-                  className="px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition duration-200 shadow-sm"
-                >
-                  <option value="">GRADE LEVEL</option>
-                  <option value="ALS">ALS</option>
-                </select>
-                <select
-                  className="px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition duration-200 shadow-sm"
-                >
-                  <option value="">SEMESTER</option>
-                  <option value="ALS">ALS</option>
-                </select>
-              </div>
-              <div className="relative">
-                <input
-                  type="text"
-                  placeholder="Search by name, LRN, etc."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  onKeyPress={(e) => e.key === 'Enter' && console.log('Search triggered')}
-                  className="w-80 px-4 py-2 pl-10 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition duration-200 text-gray-700 placeholder-gray-400 shadow-sm"
-                />
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
-                {searchTerm && (
-                  <button
-                    onClick={() => setSearchTerm('')}
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
-                    title="Clear search"
-                  >
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                  </button>
-                )}
-              </div>
-            </div>
-            {searchTerm && (
-              <div className="mb-4 text-sm text-gray-600">
-                Searching for: <span className="font-medium text-blue-600">"{searchTerm}"</span>
-                <span className="ml-2 text-xs text-gray-500">
-                  ({filteredStudents.length} result{filteredStudents.length !== 1 ? 's' : ''} found)
-                </span>
-              </div>
-            )}
-            <div className="overflow-x-auto">
-              {filteredStudents.length === 0 ? (
-                <div className="p-8 text-center text-gray-500">No ALS students found</div>
-              ) : (
-                <table className="w-full text-sm text-left text-gray-500">
-                  <thead className="text-xs text-gray-600 uppercase bg-gray-50">
-                    <tr>
-                      <th scope="col" className="py-3 px-6">Action</th>
-                      <th scope="col" className="py-3 px-6">LRN</th>
-                      <th scope="col" className="py-3 px-6">Name</th>
-                      <th scope="col" className="py-3 px-6">Age</th>
-                      <th scope="col" className="py-3 px-6">Status</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {filteredStudents.map((student) => (
-                      <tr key={student.lrn} className="bg-white border-b">
-                        <td className="py-3 px-6">
-                          <div className="flex items-center gap-2">
-                            <button
-                              onClick={() => handleView(student)}
-                              className="flex items-center space-x-1 px-3 py-1 bg-blue-600 text-white text-xs rounded hover:bg-blue-700"
-                            >
-                              <Eye size={14} />
-                              <span>View</span>
-                            </button>
-                            <button
-                              onClick={() => handleDelete(student.lrn, `${student.lname}, ${student.fname}`)}
-                              className="flex items-center space-x-1 px-3 py-1 bg-red-600 text-white text-xs rounded hover:bg-red-700"
-                            >
-                              <Trash2 size={14} />
-                              <span>Delete</span>
-                            </button>
-                          </div>
-                        </td>
-                        <td className="py-3 px-6">{student.lrn || 'N/A'}</td>
-                        <td className="py-3 px-6">{student.lname}, {student.fname} {student.mname}</td>
-                        <td className="py-3 px-6">{student.age}</td>
-                        <td className="py-3 px-6">
-                          <span className="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded">
-                            {student.enrollment_status}
-                          </span>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              )}
-            </div>
-          </div>
+      <div className="flex items-center justify-between gap-4 mb-4">
+        <div className="flex items-center gap-4">
+          <span className="text-sm text-gray-600 font-medium">SORT BY:</span>
+          <select
+            value={sortAlphabetical}
+            onChange={(e) => setSortAlphabetical(e.target.value)}
+            className="px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition duration-200 shadow-sm"
+            title="Filter students by the starting letter of their First, Middle, or Last Name"
+          >
+            <option value="">NAME (First/Mid/Last)</option>
+            {alphabet.map((letter) => (
+              <option key={letter} value={letter}>
+                {letter}
+              </option>
+            ))}
+          </select>
+          <select
+            value={sortSex}
+            onChange={(e) => setSortSex(e.target.value)}
+            className="px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition duration-200 shadow-sm"
+          >
+            <option value="">SEX</option>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+          </select>
+          <select
+            value={sortLRN}
+            onChange={(e) => setSortLRN(e.target.value)}
+            className="px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition duration-200 shadow-sm"
+          >
+            <option value="">LRN (Start)</option>
+            {lrnDigits.map((digit) => (
+              <option key={digit} value={digit}>
+                {digit}
+              </option>
+            ))}
+          </select>
+          <select
+            value={sortDate}
+            onChange={(e) => setSortDate(e.target.value)}
+            className="px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition duration-200 shadow-sm"
+          >
+            <option value="">ENROLLED DATE</option>
+            <option value="newest">Newest First</option>
+            <option value="oldest">Oldest First</option>
+          </select>
         </div>
+        <div className="relative">
+          <input
+            type="text"
+            placeholder="Search by name, LRN, etc."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            onKeyPress={(e) => e.key === 'Enter' && console.log('Search triggered')}
+            className="w-80 px-4 py-2 pl-10 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition duration-200 text-gray-700 placeholder-gray-400 shadow-sm"
+          />
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
+          {searchTerm && (
+            <button
+              onClick={() => setSearchTerm('')}
+              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+              title="Clear search"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          )}
+        </div>
+      </div>
+      {searchTerm && (
+        <div className="mb-4 text-sm text-gray-600">
+          Searching for: <span className="font-medium text-blue-600">"{searchTerm}"</span>
+          <span className="ml-2 text-xs text-gray-500">
+            ({filteredStudents.length} result{filteredStudents.length !== 1 ? 's' : ''} found)
+          </span>
+        </div>
+      )}
+      <div className="overflow-x-auto max-h-[600px] overflow-y-auto">
+        {filteredStudents.length === 0 ? (
+          <div className="p-8 text-center text-gray-500">No ALS students found</div>
+        ) : (
+          <table className="w-full table-fixed text-sm text-left text-gray-500">
+            <thead className="text-xs text-gray-600 uppercase bg-gray-50 sticky top-0">
+              <tr>
+                <th scope="col" className="py-3 px-6" style={{width: '23.5%'}}>Action</th>
+                <th scope="col" className="py-3 px-6" style={{width: '15%'}}>LRN</th>
+                <th scope="col" className="py-3 px-6" style={{width: '20%'}}>Name</th>
+                <th scope="col" className="py-3 px-6" style={{width: '8%'}}>Age</th>
+                <th scope="col" className="py-3 px-6" style={{width: '12%'}}>Enrolled At</th>
+                <th scope="col" className="py-3 px-6" style={{width: '8%'}}>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredStudents.map((student) => (
+                <tr key={student.lrn} className="bg-white border-b">
+                  <td className="py-3 px-6">
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => handleView(student)}
+                        className="p-1.5 bg-blue-400 text-white text-xs rounded hover:bg-blue-600"
+                        title="View"
+                      >
+                        <Eye size={14} />
+                      </button>
+                      <button
+                        onClick={() => handleEditStudent(student)}
+                        className="p-1.5 bg-yellow-400 text-white text-xs rounded hover:bg-yellow-600"
+                        title="Edit"
+                      >
+                        <Pencil size={14} />
+                      </button>
+                      <button
+                        onClick={() => handleDelete(student.lrn, `${student.lname}, ${student.fname}`)}
+                        className="p-1.5 bg-red-400 text-white text-xs rounded hover:bg-red-600"
+                        title="Delete"
+                      >
+                        <Trash2 size={14} />
+                      </button>
+                      <button
+                        onClick={() => handleUnenroll(student.lrn, `${student.lname}, ${student.fname}`)}
+                        className="flex items-center space-x-1 px-3 py-1 bg-orange-500 text-white text-xs rounded hover:bg-orange-600"
+                        title="Unenroll"
+                      >
+                        <XCircle size={14} />
+                        <span>Unenroll</span>
+                      </button>
+                    </div>
+                  </td>
+                  <td className="py-3 px-6">{student.lrn || 'N/A'}</td>
+                  <td className="py-3 px-6">{student.lname}, {student.fname} {student.mname}</td>
+                  <td className="py-3 px-6">{student.age}</td>
+                  <td className="py-3 px-6">
+                    {student.approved_at
+                      ? new Date(student.approved_at).toLocaleString('en-US', {
+                          year: 'numeric',
+                          month: 'short',
+                          day: 'numeric',
+                          hour: 'numeric',
+                          minute: 'numeric',
+                          hour12: true
+                        })
+                      : 'N/A'}
+                  </td>
+                  <td className="py-3 px-6">
+                    <span className="bg-green-100 text-green-400 text-xs font-medium px-2.5 py-0.5 rounded">
+                      {student.enrollment_status}
+                    </span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
       </div>
 
       {/* Confirmation Modal */}
@@ -392,7 +503,7 @@ export default function ALSStudent() {
             <div className="p-6">
               <div className="flex justify-between items-center mb-6 border-b pb-4">
                 <h2 className="text-2xl font-bold text-gray-800">
-                  Confirm Delete
+                  Confirm {confirmAction.type === 'delete' ? 'Delete' : 'Unenroll'}
                 </h2>
                 <button
                   onClick={() => {
@@ -407,11 +518,13 @@ export default function ALSStudent() {
 
               <div className="mb-6">
                 <p className="text-gray-600 text-lg">
-                  Are you sure you want to delete the student "{confirmAction.studentName}"?
+                  Are you sure you want to {confirmAction.type === 'delete' ? 'delete' : 'unenroll'} the student "{confirmAction.studentName}"?
                 </p>
-                <p className="text-red-600 text-sm mt-2 font-medium">
-                  This action cannot be undone.
-                </p>
+                {confirmAction.type === 'delete' && (
+                  <p className="text-red-600 text-sm mt-2 font-medium">
+                    This action cannot be undone.
+                  </p>
+                )}
               </div>
 
               <div className="flex justify-end gap-3 pt-4">
@@ -425,10 +538,14 @@ export default function ALSStudent() {
                   Cancel
                 </button>
                 <button
-                  onClick={handleConfirmDelete}
-                  className="px-6 py-2 text-white rounded-lg transition duration-300 shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-offset-2 bg-gradient-to-r from-red-500 to-red-700 hover:from-red-600 hover:to-red-800 focus:ring-red-600"
+                  onClick={confirmAction.type === 'delete' ? handleConfirmDelete : handleConfirmUnenroll}
+                  className={`px-6 py-2 text-white rounded-lg transition duration-300 shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-offset-2 ${
+                    confirmAction.type === 'delete'
+                      ? 'bg-gradient-to-r from-red-500 to-red-700 hover:from-red-600 hover:to-red-800 focus:ring-red-600'
+                      : 'bg-gradient-to-r from-orange-500 to-orange-700 hover:from-orange-600 hover:to-orange-800 focus:ring-orange-600'
+                  }`}
                 >
-                  Delete
+                  {confirmAction.type === 'delete' ? 'Delete' : 'Unenroll'}
                 </button>
               </div>
             </div>

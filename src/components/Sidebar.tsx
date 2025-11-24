@@ -1,8 +1,6 @@
 import {
   LayoutDashboard,
   Users,
-  BookOpen,
-  UserPlus,
   LogOut,
   Shield,
 } from "lucide-react";
@@ -16,10 +14,7 @@ interface SidebarProps {
 
 const navItems = [
   { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { id: "regular-student", label: "Regular Students", icon: Users },
-  { id: "als-student", label: "ALS Students", icon: BookOpen },
-  { id: "als-new-enrollees", label: "ALS New Enrollees", icon: UserPlus },
-  { id: "new-student", label: "New Enrollees", icon: UserPlus },
+  { id: "students", label: "Students", icon: Users },
   { id: "app-users", label: "AppUsers", icon: Users },
   { id: "security", label: "Security", icon: Shield },
 ];
