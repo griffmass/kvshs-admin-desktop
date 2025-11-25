@@ -99,6 +99,8 @@ export default function RegularStudent() {
     return 0;
   });
 
+  const activeHighlight = searchTerm || sortAlphabetical;
+
   const handleSearch = () => {
     // Search is now handled in real-time by the filteredStudents computed value
     // No additional logic needed as filtering happens on every keystroke
@@ -266,6 +268,27 @@ export default function RegularStudent() {
       console.error('Error unenrolling student:', error);
       alert('Failed to unenroll student');
     }
+  };
+
+  const HighlightedText = ({ text, highlight }: { text: string; highlight?: string }) => {
+    if (!highlight || !text) return <>{text}</>;
+
+    const regex = new RegExp(`(${highlight})`, 'gi');
+    const parts = text.split(regex);
+
+    return (
+      <>
+        {parts.map((part, index) =>
+          regex.test(part) ? (
+            <span key={index} className="bg-green-400 text-gray-900 px-0.5 rounded">
+              {part}
+            </span>
+          ) : (
+            part
+          )
+        )}
+      </>
+    );
   };
 
   const handleGeneratePDF = () => {
@@ -453,14 +476,13 @@ export default function RegularStudent() {
           <table className="w-full table-fixed text-sm text-left text-gray-500">
             <thead className="text-xs text-gray-600 uppercase bg-gray-50 sticky top-0">
               <tr>
-                <th scope="col" className="py-3 px-6" style={{width: '23.5%'}}>Action</th>
+                <th scope="col" className="py-3 px-6" style={{width: '16.5%'}}>Action</th>
                 <th scope="col" className="py-3 px-6" style={{width: '15%'}}>LRN</th>
-                <th scope="col" className="py-3 px-6" style={{width: '20%'}}>Name</th>
-                <th scope="col" className="py-3 px-6" style={{width: '8%'}}>Strand</th>
-                <th scope="col" className="py-3 px-6" style={{width: '10%'}}>Grade Level</th>
-                <th scope="col" className="py-3 px-6" style={{width: '8%'}}>Semester</th>
-                <th scope="col" className="py-3 px-6" style={{width: '15%'}}>Enrolled At</th>
-                <th scope="col" className="py-3 px-6" style={{width: '7.5%'}}>Status</th>
+                <th scope="col" className="py-3 px-6" style={{width: '22%'}}>Name</th>
+                <th scope="col" className="py-3 px-6" style={{width: '12%'}}>Strand</th>
+                <th scope="col" className="py-3 px-6" style={{width: '14%'}}>Grade Level</th>
+                <th scope="col" className="py-3 px-6" style={{width: '17%'}}>Enrolled At</th>
+                <th scope="col" className="py-3 px-6" style={{width: '10.5%'}}>Status</th>
               </tr>
             </thead>
             <tbody>
@@ -499,11 +521,14 @@ export default function RegularStudent() {
                       </button>
                     </div>
                   </td>
-                  <td className="py-3 px-6">{student.lrn || 'N/A'}</td>
-                  <td className="py-3 px-6">{student.lname}, {student.fname} {student.mname}</td>
+                  <td className="py-3 px-6">
+                    <HighlightedText text={student.lrn || 'N/A'} highlight={searchTerm || sortLRN} />
+                  </td>
+                  <td className="py-3 px-6">
+                    <HighlightedText text={`${student.lname},`} highlight={activeHighlight} /> <HighlightedText text={student.fname} highlight={activeHighlight} /> <HighlightedText text={student.mname} highlight={activeHighlight} />
+                  </td>
                   <td className="py-3 px-6">{student.strand}</td>
                   <td className="py-3 px-6">{student.gradeLevel}</td>
-                  <td className="py-3 px-6">{student.semester}</td>
                   <td className="py-3 px-6">
                     {student.approved_at
                       ? new Date(student.approved_at).toLocaleString('en-US', {

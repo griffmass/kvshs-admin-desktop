@@ -4,6 +4,30 @@ import { Search, Eye, CheckCircle, Trash2, Pencil } from 'lucide-react';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 
+// HighlightedText component for search highlighting
+const HighlightedText = ({ text, highlight }: { text: string; highlight: string }) => {
+  if (!highlight.trim()) {
+    return <span>{text}</span>;
+  }
+
+  const regex = new RegExp(`(${highlight.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+  const parts = text.split(regex);
+
+  return (
+    <span>
+      {parts.map((part, index) =>
+        regex.test(part) ? (
+          <mark key={index} className="bg-yellow-200 text-gray-900 px-0.5 rounded">
+            {part}
+          </mark>
+        ) : (
+          <span key={index}>{part}</span>
+        )
+      )}
+    </span>
+  );
+};
+
 export default function NewStudent() {
   const alphabet = "ABCDEFGHIJKLMNÑOPQRSTUVWXYZ".split("");
   const lrnDigits = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
@@ -448,14 +472,13 @@ export default function NewStudent() {
           <table className="w-full table-fixed text-sm text-left text-gray-500">
             <thead className="text-xs text-gray-600 uppercase bg-gray-50 sticky top-0">
               <tr>
-                <th scope="col" className="py-3 px-6" style={{width: '23.5%'}}>Action</th>
+                <th scope="col" className="py-3 px-6" style={{width: '16.5%'}}>Action</th>
                 <th scope="col" className="py-3 px-6" style={{width: '15%'}}>LRN</th>
-                <th scope="col" className="py-3 px-6" style={{width: '20%'}}>Name</th>
-                <th scope="col" className="py-3 px-6" style={{width: '8%'}}>Strand</th>
-                <th scope="col" className="py-3 px-6" style={{width: '10%'}}>Grade Level</th>
-                <th scope="col" className="py-3 px-6" style={{width: '8%'}}>Semester</th>
-                <th scope="col" className="py-3 px-6" style={{width: '12%'}}>Submitted At</th>
-                <th scope="col" className="py-3 px-6" style={{width: '8%'}}>Status</th>
+                <th scope="col" className="py-3 px-6" style={{width: '22%'}}>Name</th>
+                <th scope="col" className="py-3 px-6" style={{width: '12%'}}>Strand</th>
+                <th scope="col" className="py-3 px-6" style={{width: '14%'}}>Grade Level</th>
+                <th scope="col" className="py-3 px-6" style={{width: '17%'}}>Submitted At</th>
+                <th scope="col" className="py-3 px-6" style={{width: '10.5%'}}>Status</th>
               </tr>
             </thead>
             <tbody>
@@ -506,11 +529,10 @@ export default function NewStudent() {
                       )}
                     </div>
                   </td>
-                  <td className="py-3 px-6">{student.lrn || 'N/A'}</td>
-                  <td className="py-3 px-6">{student.lname}, {student.fname} {student.mname}</td>
+                  <td className="py-3 px-6"><HighlightedText text={student.lrn || 'N/A'} highlight={searchTerm} /></td>
+                  <td className="py-3 px-6"><HighlightedText text={`${student.lname}, ${student.fname} ${student.mname}`} highlight={searchTerm} /></td>
                   <td className="py-3 px-6">{student.strand}</td>
                   <td className="py-3 px-6">{student.gradeLevel}</td>
-                  <td className="py-3 px-6">{student.semester}</td>
                   <td className="py-3 px-6">
                     {student.added_at
                       ? new Date(student.added_at).toLocaleString('en-US', {

@@ -34,6 +34,9 @@
   <a href="https://github.com/parallax/jsPDF">
     <img src="https://img.shields.io/badge/jsPDF-DC143C?style=for-the-badge&logo=npm&logoColor=white" alt="jsPDF">
   </a>
+  <a href="https://www.framer.com/motion/">
+    <img src="https://img.shields.io/badge/Framer_Motion-0055FF?style=for-the-badge&logo=framer&logoColor=white" alt="Framer Motion">
+  </a>
 </p>
 
 <p align="center">
@@ -62,6 +65,7 @@ This project was built using the following technologies:
 - [jsPDF](https://github.com/parallax/jsPDF) & [html2canvas](https://html2canvas.hertzen.com/): For generating and downloading PDF reports.
 - [EmailJS](https://www.emailjs.com/): For sending automated email notifications.
 - [BcryptJS](https://github.com/dcodeIO/bcrypt.js): For secure password hashing.
+- [Framer Motion](https://www.framer.com/motion/): For production-ready animation and layout transitions.
 
 <h3>Getting Started</h3>
 To get a local copy up and running, please follow these simple steps.
@@ -98,18 +102,50 @@ npm install
 
 **Key Dependencies Installation** If you are setting this project up from scratch or need to add these specific features manually, use the commands below. _Note: If you ran `npm install` above, these are already installed._
 
-- **EmailJS** (For sending emails via client-side):
-```
+```bash
+# EmailJS (For sending emails via client-side):
 npm install @emailjs/browser
 ```
-- **BcryptJS** (For password hashing/security):
+
+```bash
+# Supabase (For database connection and authentication):
+npm install @supabase/supabase-js
 ```
+
+```bash
+# BcryptJS (For password hashing/security):
 npm install bcryptjs
 npm install --save-dev @types/bcryptjs
 ```
-- **HTML Canvas & PDF Generation** (For generating downloadable reports):
+
+```bash
+# Framer Motion (For UI animations and transitions):
+npm install framer-motion
 ```
+
+```bash
+# HTML Canvas & PDF Generation (For generating downloadable reports):
 npm install html2canvas jspdf
+```
+
+```bash
+# Lucide React (For the icon set):
+npm install lucide-react
+```
+
+```bash
+# React Router (For application routing and navigation):
+npm install react-router-dom
+```
+
+```bash
+# Electron Utilities (For handling Windows installation events):
+npm install electron-squirrel-startup
+```
+
+```bash
+# Core React & Build Tools (Framework, DOM, Bundler, and Env variables):
+npm install react react-dom vite dotenv
 ```
 
 **3. Set Up Environment Variables**
