@@ -1,13 +1,13 @@
 import { createClient } from '@supabase/supabase-js';
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+const supabaseServiceKey = import.meta.env.VITE_MY_SERVICE_ROLE_KEY;
 
-if (!supabaseUrl || !supabaseAnonKey) {
-  throw new Error('Supabase URL or Anon Key is missing in supabase.ts');
+if (!supabaseUrl || !supabaseServiceKey) {
+  throw new Error('Supabase URL or ServiceKey is missing in supabase.ts');
 }
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+export const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
 // The rest of your interface definitions remain the same.
 export interface Student {
@@ -68,6 +68,7 @@ export interface Student {
   gradeLevel?: string;
   guardianLN?: string;
   enrollment_status?: 'Pending' | 'Enrolled';
+  approved_at?: string;
   created_at?: string;
   strand?: string;
   semester?: string;
@@ -79,4 +80,5 @@ export interface Student {
   rlLastSYComplete?: string;
   rlLastSchoolAtt?: string;
   rlSchoolID?: string;
+  section?: string;
 }

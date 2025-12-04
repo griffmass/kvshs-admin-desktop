@@ -1,38 +1,39 @@
-import { useState } from 'react';
-import { HashRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { AuthProvider, useAuth } from './contexts/AuthContext';
-import Sidebar from './components/Sidebar';
-import Dashboard from './pages/Dashboard';
-import NewStudent from './pages/NewStudent';
-import ALSStudent from './pages/ALSStudent';
-import ALSNewEnrollees from './pages/ALSNewEnrollees';
-import RegularStudent from './pages/RegularStudent';
-import AppUsers from './pages/AppUsers';
-import ChangePassword from './pages/ChangePassword';
-import Login from './pages/Login';
-import ForgotPassword from './pages/ForgotPassword';
-import UpdatePassword from './pages/UpdatePassword';
+import { useState } from "react";
+import {
+  HashRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
+import { AuthProvider, useAuth } from "./contexts/AuthContext";
+import Sidebar from "./components/Sidebar";
+import Dashboard from "./pages/Dashboard";
+import StudentsPage from "./pages/StudentsPage";
+import AppUsers from "./pages/AppUsers";
+import ChangePassword from "./pages/ChangePassword";
+import Login from "./pages/Login";
+import ForgotPassword from "./pages/ForgotPassword";
+import UpdatePassword from "./pages/UpdatePassword";
+import Subject from "./pages/Subject"; // Import the Subject page
 
 function AppContent() {
   const { user, loading, signOut } = useAuth();
-  const [currentPage, setCurrentPage] = useState('dashboard');
+  const [currentPage, setCurrentPage] = useState("dashboard");
   const [showLogoutModal, setShowLogoutModal] = useState(false);
 
   const renderPage = (page: string) => {
     switch (page) {
-      case 'dashboard':
+      case "dashboard":
         return <Dashboard onNavigate={setCurrentPage} />;
-      case 'new-student':
-        return <NewStudent />;
-      case 'als-student':
-        return <ALSStudent />;
-      case 'als-new-enrollees':
-        return <ALSNewEnrollees />;
-      case 'regular-student':
-        return <RegularStudent />;
-      case 'app-users':
+      case "students": // This case handles the parent 'Students' link
+      case "enrollment": // This handles the nested 'Enrollment' link
+      case "student-records": // This handles the nested 'Student Records' link
+        return <StudentsPage currentPage={currentPage} />;
+      case "app-users":
         return <AppUsers />;
-      case 'security':
+      case "subjects": // Add this case for the Subject page
+        return <Subject />;
+      case "security":
         return <ChangePassword />;
       default:
         return <Dashboard onNavigate={setCurrentPage} />;
@@ -53,7 +54,11 @@ function AppContent() {
   };
 
   if (loading) {
-    return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        Loading...
+      </div>
+    );
   }
 
   if (user) {
@@ -63,16 +68,28 @@ function AppContent() {
           <div className="w-full h-[450px] bg-gradient-to-br from-blue-500 to-blue-50"></div>
           <div className="w-full h-full bg-gray-100 -mt-[2px]"></div>
         </div>
-        <Sidebar currentPage={currentPage} onNavigate={setCurrentPage} onLogout={handleLogoutClick} />
-        <main className="ml-48 flex-1 overflow-hidden">
+        <Sidebar
+          currentPage={currentPage}
+          onNavigate={setCurrentPage}
+          onLogout={handleLogoutClick}
+        />
+        <main className="ml-64 flex-1 overflow-y-auto">
           {renderPage(currentPage)}
         </main>
         {showLogoutModal && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center" style={{ zIndex: 9999 }}>
-            <div className="bg-white rounded-lg shadow-xl max-w-md w-full" style={{ zIndex: 10000 }}>
+          <div
+            className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center"
+            style={{ zIndex: 9999 }}
+          >
+            <div
+              className="bg-white rounded-lg shadow-xl max-w-md w-full"
+              style={{ zIndex: 10000 }}
+            >
               <div className="p-6">
                 <div className="flex justify-between items-center mb-6 border-b pb-4">
-                  <h2 className="text-2xl font-bold text-gray-800">Confirm Logout</h2>
+                  <h2 className="text-2xl font-bold text-gray-800">
+                    Confirm Logout
+                  </h2>
                   <button
                     onClick={handleLogoutCancel}
                     className="text-gray-500 hover:text-gray-700 text-3xl leading-none"
@@ -81,7 +98,9 @@ function AppContent() {
                   </button>
                 </div>
                 <div className="mb-6">
-                  <p className="text-gray-600 text-lg">Are you sure you want to log out?</p>
+                  <p className="text-gray-600 text-lg">
+                    Are you sure you want to log out?
+                  </p>
                 </div>
                 <div className="flex justify-end gap-3 pt-4">
                   <button

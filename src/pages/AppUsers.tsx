@@ -206,19 +206,18 @@ export default function AppUsers() {
         <div className="w-full h-[450px] bg-gradient-to-br from-blue-500 to-blue-50"></div>
         <div className="w-full h-full bg-gray-100 -mt-[2px]"></div>
       </div>
-
-      <div className="flex-1 flex flex-col min-h-screen ml-68 overflow-y-auto">
-        <div className="p-4 pl-32 pt-12">
-          <div className="mb-6 flex justify-between items-center">
-            <h1 className="text-2xl font-bold text-white">App Users</h1>
-            <button
-              onClick={() => setShowAddModal(true)}
-              className="bg-gradient-to-r from-blue-500 to-blue-700 text-white px-6 py-2 rounded-lg text-lg font-medium hover:from-blue-600 hover:to-blue-800 transition duration-300 shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-600 flex items-center gap-2"
-            >
-              <Plus size={20} />
-              Add Account
-            </button>
-          </div>
+      <div className="flex-1 ml-68 overflow-y-auto">
+        <div className="p-8">
+          <header className="flex justify-between items-center mb-8">
+          <h1 className="text-2xl font-bold text-white">App Users</h1>
+          <button
+            onClick={() => setShowAddModal(true)}
+            className="bg-gradient-to-r from-blue-500 to-blue-700 text-white px-6 py-2 rounded-lg text-lg font-medium hover:from-blue-600 hover:to-blue-800 transition duration-300 shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-600 flex items-center gap-2"
+          >
+            <Plus size={20} />
+            Add Account
+          </button>
+        </header>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
             <div className="bg-white p-6 h-40 rounded-xl shadow-md flex items-center justify-between hover:scale-[1.02] transition-transform duration-300 cursor-pointer">
@@ -339,9 +338,9 @@ export default function AppUsers() {
             </div>
           </div>
         </div>
-      </div>
+        </div>
 
-      {/* Confirmation Modal */}
+        {/* Confirmation Modal */}
       {showConfirmModal && confirmAction && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-lg shadow-xl max-w-md w-full">

@@ -16,10 +16,10 @@ let mainWindow;
 
 function createWindow() {
   mainWindow = new BrowserWindow({
-    width: 1400,
-    height: 900,
-    minWidth: 1200,
-    minHeight: 700,
+    width: 1920,
+    height: 1060,
+    minWidth: 1920,
+    minHeight: 1060,
     // --- FIX: Use favicon.ico instead of Logo.png ---
     icon: path.join(__dirname, "../public/favicon.ico"),
     // ------------------------------------------------
@@ -99,14 +99,20 @@ app.whenReady().then(() => {
     }
   });
 
-  ipcMain.handle("update-user-password", async (event, { userId, newPassword }) => {
-    try {
-      const result = await adminFunctions.updateUserPassword(userId, newPassword);
-      return { success: true, data: result };
-    } catch (error) {
-      return { success: false, error: error.message };
+  ipcMain.handle(
+    "update-user-password",
+    async (event, { userId, newPassword }) => {
+      try {
+        const result = await adminFunctions.updateUserPassword(
+          userId,
+          newPassword
+        );
+        return { success: true, data: result };
+      } catch (error) {
+        return { success: false, error: error.message };
+      }
     }
-  });
+  );
 
   ipcMain.handle("generate-reset-token", async (event, userId) => {
     try {
