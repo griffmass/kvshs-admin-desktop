@@ -14,6 +14,7 @@ import ChangePassword from "./pages/ChangePassword";
 import Login from "./pages/Login";
 import ForgotPassword from "./pages/ForgotPassword";
 import UpdatePassword from "./pages/UpdatePassword";
+import Subject from "./pages/Subject"; // Import the Subject page
 
 function AppContent() {
   const { user, loading, signOut } = useAuth();
@@ -30,6 +31,8 @@ function AppContent() {
         return <StudentsPage currentPage={currentPage} />;
       case "app-users":
         return <AppUsers />;
+      case "subjects": // Add this case for the Subject page
+        return <Subject />;
       case "security":
         return <ChangePassword />;
       default:

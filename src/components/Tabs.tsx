@@ -16,20 +16,21 @@ interface TabsProps {
 }
 
 export default function Tabs({ children, defaultActiveKey }: TabsProps) {
+  const childrenArray = React.Children.toArray(children) as React.ReactElement<TabProps>[];
   const [activeKey, setActiveKey] = useState<string>(
-    defaultActiveKey || (children.length > 0 ? children[0].props.eventKey : '')
+    defaultActiveKey || (childrenArray.length > 0 ? childrenArray[0].props.eventKey : '')
   );
 
   const handleTabClick = (key: string) => {
     setActiveKey(key);
   };
 
-  const activeTab = children.find(child => child.props.eventKey === activeKey);
+  const activeTab = childrenArray.find(child => child.props.eventKey === activeKey);
 
   return (
     <div>
       <ul className="flex flex-wrap list-none border-b border-gray-200">
-        {children.map((child) => (
+        {childrenArray.map((child) => (
           <li key={child.props.eventKey} className="-mb-px">
             <button
               onClick={() => handleTabClick(child.props.eventKey)}

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import { motion } from "framer-motion";
 import {
   LayoutDashboard,
@@ -34,6 +34,7 @@ const navItems: NavItem[] = [
     subItems: [
       { id: "enrollment", label: "Enrollment" },
       { id: "student-records", label: "Student Records" },
+      { id: "subjects", label: "Subjects" },
     ],
   },
   { id: "app-users", label: "AppUsers", icon: Users },
@@ -42,8 +43,7 @@ const navItems: NavItem[] = [
 
 // Helper function to check if a page is a student sub-page
 const isStudentSubPage = (page: string) =>
-  ['enrollment', 'student-records'].includes(page);
-
+  ["enrollment", "student-records", "subjects"].includes(page);
 
 export default function Sidebar({
   currentPage,
@@ -55,7 +55,7 @@ export default function Sidebar({
     isStudentSubPage(currentPage)
   );
 
-  const handleParentClick = (id: string, subItems: NavItem['subItems']) => {
+  const handleParentClick = (id: string, subItems: NavItem["subItems"]) => {
     if (id === "students-parent" && subItems) {
       // Toggle the dropdown
       setIsStudentsOpen(!isStudentsOpen);
@@ -75,7 +75,9 @@ export default function Sidebar({
 
       <nav className="flex-grow mt-6 space-y-2">
         {navItems.map((item) => {
-          const isActive = (item.id === "students-parent" && isStudentSubPage(currentPage)) || currentPage === item.id;
+          const isActive =
+            (item.id === "students-parent" && isStudentSubPage(currentPage)) ||
+            currentPage === item.id;
 
           return (
             <div key={item.id}>
@@ -83,7 +85,9 @@ export default function Sidebar({
               <button
                 onClick={() => handleParentClick(item.id, item.subItems)}
                 className={`relative w-full text-left rounded-lg transition-all duration-200 ${
-                  isActive ? "text-white" : "text-gray-600 hover:bg-gray-100 hover:text-gray-800"
+                  isActive
+                    ? "text-white"
+                    : "text-gray-600 hover:bg-gray-100 hover:text-gray-800"
                 }`}
               >
                 {isActive && (
@@ -99,46 +103,55 @@ export default function Sidebar({
                     {item.icon && <item.icon size={20} />}
                     <span className="font-medium">{item.label}</span>
                   </div>
-                  {item.subItems && (
-                    isStudentsOpen ? <ChevronDown size={16} /> : <ChevronRight size={16} />
-                  )}
+                  {item.subItems &&
+                    (isStudentsOpen ? (
+                      <ChevronDown size={16} />
+                    ) : (
+                      <ChevronRight size={16} />
+                    ))}
                 </span>
               </button>
 
-            {/* Sub-Items (Enrollment and Student Records) */}
-            {item.subItems && (
-              <div
-                className={`grid transition-all duration-300 ease-in-out ${
-                  isStudentsOpen ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
-                }`}
-              >
-                <div className="overflow-hidden">
-                  <div className="ml-4 mt-1 space-y-1 border-l-2 border-gray-200 pl-3">
-                    {item.subItems.map((subItem) => (
-                      <button
-                        key={subItem.id}
-                        onClick={() => onNavigate(subItem.id)}
-                        className={`relative w-full flex items-center px-4 py-2 text-left rounded-lg transition-all duration-200 text-sm ${
-                          currentPage === subItem.id
-                            ? "text-blue-700 font-semibold"
-                            : "text-gray-600 hover:bg-gray-100"
-                        }`}
-                      >
-                        {currentPage === subItem.id && (
-                          <motion.div
-                            layoutId="active-sub-pill"
-                            className="absolute inset-0 bg-blue-100 rounded-lg"
-                            initial={false}
-                            transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                          />
-                        )}
-                        <span className="relative z-10">{subItem.label}</span>
-                      </button>
-                    ))}
+              {/* Sub-Items (Enrollment and Student Records) */}
+              {item.subItems && (
+                <div
+                  className={`grid transition-all duration-300 ease-in-out ${
+                    isStudentsOpen
+                      ? "grid-rows-[1fr] opacity-100"
+                      : "grid-rows-[0fr] opacity-0"
+                  }`}
+                >
+                  <div className="overflow-hidden">
+                    <div className="ml-4 mt-1 space-y-1 border-l-2 border-gray-200 pl-3">
+                      {item.subItems.map((subItem) => (
+                        <button
+                          key={subItem.id}
+                          onClick={() => onNavigate(subItem.id)}
+                          className={`relative w-full flex items-center px-4 py-2 text-left rounded-lg transition-all duration-200 text-sm ${
+                            currentPage === subItem.id
+                              ? "text-blue-700 font-semibold"
+                              : "text-gray-600 hover:bg-gray-100"
+                          }`}
+                        >
+                          {currentPage === subItem.id && (
+                            <motion.div
+                              layoutId="active-sub-pill"
+                              className="absolute inset-0 bg-blue-100 rounded-lg"
+                              initial={false}
+                              transition={{
+                                type: "spring",
+                                stiffness: 300,
+                                damping: 30,
+                              }}
+                            />
+                          )}
+                          <span className="relative z-10">{subItem.label}</span>
+                        </button>
+                      ))}
+                    </div>
                   </div>
                 </div>
-              </div>
-            )}
+              )}
             </div>
           );
         })}

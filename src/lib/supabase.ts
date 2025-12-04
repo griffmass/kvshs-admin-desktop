@@ -80,4 +80,5 @@ export interface Student {
   rlLastSYComplete?: string;
   rlLastSchoolAtt?: string;
   rlSchoolID?: string;
+  section?: string;
 }
