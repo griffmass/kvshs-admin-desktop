@@ -66,12 +66,10 @@ export default function AppUsers() {
 
   const filteredAppUsers = appUsers.filter((user) => {
     const fullName = user.full_name || '';
-    const matchesSearch = searchTerm === '' ||
-      fullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.full_name?.toLowerCase().includes(searchTerm.toLowerCase());
-
-    return matchesSearch;
+    return searchTerm === '' ||
+          fullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          user.full_name?.toLowerCase().includes(searchTerm.toLowerCase());
   });
 
 
