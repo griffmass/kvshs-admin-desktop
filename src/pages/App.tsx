@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Layout from "./components/Layout";
-import Subject from "./pages/Subject";
+import Layout from "../pages/Layout";
+import Subject from "../pages/Subject";
 // Import other pages you might have
 // import Dashboard from "./pages/Dashboard";
 

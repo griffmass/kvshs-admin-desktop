@@ -57,7 +57,7 @@ export default function Dashboard({
       // Fetch enrolled students from NewStudents
       const { data: enrolledData, error: enrolledError } = await supabase
         .from("NewStudents")
-        .select("lrn, lname, fname, mname, semester, strand, enrollment_status")
+        .select("lrn, lname, fname, mname, semester, strand, enrollment_status, added_at")
         .eq("enrollment_status", "Enrolled")
         .order("lrn", { ascending: true });
 
@@ -66,7 +66,7 @@ export default function Dashboard({
       // Fetch pending students from NewStudents (limit to 3 for dashboard, most recent first)
       const { data: pendingData, error: pendingError } = await supabase
         .from("NewStudents")
-        .select("lrn, lname, fname, mname, semester, strand, enrollment_status")
+        .select("lrn, lname, fname, mname, semester, strand, enrollment_status, added_at")
         .eq("enrollment_status", "Pending")
         .order("lrn", { ascending: false })
         .limit(3);
@@ -93,7 +93,12 @@ export default function Dashboard({
       if (alsPendingError) throw alsPendingError;
 
       setPendingStudents(pendingData || []);
-      setAlsPendingStudents(alsPendingData || []);
+      setAlsPendingStudents(
+        (alsPendingData || []).map((student) => ({
+          ...student,
+          added_at: null, // or undefined, depending on your Student type
+        }))
+      );
 
       // Calculate strand counts
       const stemCount =

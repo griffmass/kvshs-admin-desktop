@@ -70,7 +70,7 @@ export default function RegularStudent() {
       const { data, error } = await supabase
         .from("NewStudents")
         .select(
-          "lrn, schoolYear, gradeLevel, psa, lname, fname, mname, bday, age, sex, birthplace, religion, motherTongue, indigenousPeople, fourPS, houseNumber, streetName, barangay, municipality, province, country, zipCode, pHN, pSN, pbrgy, pMunicipal, pProvince, pCountry, pZipCode, fatherFN, fatherMN, fatherLN, fatherCN, motherFN, motherMN, motherLN, motherCN, guardianFN, guardianLN, guardianCN, SNEP, pwdID, rlGradeLevelComplete, rlLastSYComplete, rlLastSchoolAtt, rlSchoolID, semester, track, strand, section, distanceLearning, enrollment_status, approved_at"
+          "lrn, schoolYear, gradeLevel, psa, lname, fname, mname, bday, age, sex, birthplace, religion, motherTongue, indigenousPeople, fourPS, houseNumber, streetName, barangay, municipality, province, country, zipCode, pHN, pSN, pbrgy, pMunicipal, pProvince, pCountry, pZipCode, fatherFN, fatherMN, fatherLN, fatherCN, motherFN, motherMN, motherLN, motherCN, guardianFN, guardianLN, guardianCN, SNEP, pwdID, rlGradeLevelComplete, rlLastSYComplete, rlLastSchoolAtt, rlSchoolID, semester, track, strand, section, distanceLearning, enrollment_status, approved_at, added_at"
         )
         .neq("strand", "ALS")
         .eq("enrollment_status", "Enrolled");
@@ -307,6 +307,7 @@ export default function RegularStudent() {
           enrollment_status: "Pending",
           unenrolled_at: currentTimestamp,
           added_at: currentTimestamp,
+          section: null, // IMPORTANT: Clear the section assignment
         })
         .eq("lrn", confirmAction.studentLrn);
 
@@ -356,13 +357,14 @@ export default function RegularStudent() {
             enrollment_status: "Pending",
             unenrolled_at: currentTimestamp,
             added_at: currentTimestamp,
+            section: null, // IMPORTANT: Clear the section assignment
           })
           .in("lrn", selectedLrns);
 
         if (error) throw error;
 
         // Remove unenrolled students from local state
-        setStudents(students.filter((s) => !selectedLrns.includes(s.lrn)));
+        setStudents(students.filter((s) => !selectedLrns.includes(s.lrn || "")));
         setSelectedLrns([]);
         setIsSelectionMode(false);
         setSuccessMessage(
@@ -378,7 +380,7 @@ export default function RegularStudent() {
         if (error) throw error;
 
         // Remove deleted students from local state
-        setStudents(students.filter((s) => !selectedLrns.includes(s.lrn)));
+        setStudents(students.filter((s) => !selectedLrns.includes(s.lrn || "")));
         setSelectedLrns([]);
         setIsSelectionMode(false);
         setSuccessMessage("Selected students have been successfully deleted!");
@@ -822,11 +824,11 @@ export default function RegularStudent() {
                       highlight={activeHighlight}
                     />{" "}
                     <HighlightedText
-                      text={student.fname}
+                      text={student.fname || ""}
                       highlight={activeHighlight}
                     />{" "}
                     <HighlightedText
-                      text={student.mname}
+                      text={student.mname || ""}
                       highlight={activeHighlight}
                     />
                   </td>

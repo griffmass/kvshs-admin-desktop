@@ -25,6 +25,7 @@ import {
   useSensors,
   DragEndEvent,
 } from "@dnd-kit/core";
+import type { DragStartEvent } from "@dnd-kit/core";
 import {
   SortableContext,
   sortableKeyboardCoordinates,
@@ -174,14 +175,13 @@ export default function Section() {
   );
 
   const [activeItem, setActiveItem] = useState<ScheduleItem | null>(null);
-
-  const handleDragStart = (event: {
-    active: { data: { current: ScheduleItem } };
-  }) => {
-    if (!isGlobalEditMode) return false;
+  const handleDragStart = (event: DragStartEvent) => {
+    if (!isGlobalEditMode) return;
+    if (!isGlobalEditMode) return;
 
     const { active } = event;
-    const item = active.data.current as ScheduleItem;
+    const item = active.data.current as ScheduleItem | undefined;
+    if (!item) return;
     setActiveItem(item);
 
     // Add visual feedback for the dragged item
@@ -194,7 +194,7 @@ export default function Section() {
         "border-blue-500"
       );
       // Add vertical drag indicator
-      draggedElement.style.transform = "scale(1.02)";
+      (draggedElement as HTMLElement).style.transform = "scale(1.02)";
     }
   };
 
@@ -264,7 +264,7 @@ export default function Section() {
         "border-2",
         "border-blue-500"
       );
-      draggedElement.style.transform = "";
+      (draggedElement as HTMLElement).style.transform = "";
 
       // Add success feedback for vertical drag
       if (activeDay === overDay) {
@@ -558,7 +558,13 @@ export default function Section() {
         );
 
         // Create schedule entries
-        const scheduleEntries = [];
+        const scheduleEntries: {
+          section: string;
+          subject_id: string;
+          day: string;
+          time_slot: string;
+          semester: string;
+        }[] = [];
         let subjectIndex = 0;
 
         selectedDays.forEach((day) => {
@@ -703,10 +709,10 @@ export default function Section() {
 
     // Run cleanup when component mounts
     runComprehensiveCleanup();
-  }, []); // Empty dependency array = runs once on mount
+  }, [cleanupSchedulesWith5Days]); // Add cleanupSchedulesWith5Days to dependencies
 
   // Function to manually trigger cleanup for specific sections
-  const triggerManualCleanup = async () => {
+  const triggerManualCleanup = useCallback(async () => {
     try {
       console.log("Triggering manual cleanup for problematic sections...");
 
@@ -808,7 +814,7 @@ export default function Section() {
     } catch (error) {
       console.error("Error during manual cleanup:", error);
     }
-  };
+  }, [cleanupSchedulesWith5Days, currentSection, activeSectionIdx, generateScheduleForSection]);
 
   // Auto-trigger manual cleanup on component mount
   useEffect(() => {
@@ -905,7 +911,7 @@ export default function Section() {
             // Add check for item.subjects
             transformedSchedule[item.day][timeIndex] = {
               time: item.time_slot,
-              subject: item.subjects.subject_code,
+              subject: Array.isArray(item.subjects) && item.subjects.length > 0 ? item.subjects[0].subject_code : "---",
             };
           }
         });
@@ -932,13 +938,7 @@ export default function Section() {
     };
 
     fetchSchedules();
-  }, [
-    activeStrand,
-    activeGrade,
-    activeSectionIdx,
-    currentSection,
-    generateScheduleForSection,
-  ]);
+  }, [activeStrand, activeGrade, activeSectionIdx, currentSection, generateScheduleForSection, cleanupSchedulesWith5Days]);
 
   const fetchStudents = async () => {
     try {
@@ -1430,7 +1430,6 @@ export default function Section() {
                     onDragStart={handleDragStart}
                     onDragEnd={handleDragEnd}
                     modifiers={[restrictToParentElement]}
-                    accessibility={false}
                   >
                     <SortableContext
                       items={getDraggableItems()}
@@ -1734,7 +1733,7 @@ export default function Section() {
                           if (timeIndex !== -1 && item.subjects) {
                             transformedSchedule[item.day][timeIndex] = {
                               time: item.time_slot,
-                              subject: item.subjects.subject_code,
+                              subject: Array.isArray(item.subjects) && item.subjects.length > 0 ? item.subjects[0].subject_code : "---",
                             };
                           }
                         });

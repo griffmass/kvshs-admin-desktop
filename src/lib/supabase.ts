@@ -11,6 +11,7 @@ export const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
 // The rest of your interface definitions remain the same.
 export interface Student {
+  added_at: any;
   id?: number;
   lrn?: string;
   date?: string;

@@ -274,7 +274,6 @@ export default function Subject() {
                     {isLoading ? (
                       <tr>
                         <td
-                          colSpan={3}
                           colSpan={4}
                           className="border border-gray-400 px-4 py-8 text-center text-gray-500"
                         >
@@ -284,7 +283,6 @@ export default function Subject() {
                     ) : subjects.length === 0 ? (
                       <tr>
                         <td
-                          colSpan={3}
                           colSpan={4}
                           className="border border-gray-400 px-4 py-8 text-center text-gray-500"
                         >
